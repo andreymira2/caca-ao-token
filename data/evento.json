@@ -1,0 +1,54 @@
+{
+  "_leia": "Horários em UTC. A ferramenta mostra em horário de Brasília. Para a semana nova, adicione os prêmios em 'semanas' e faça commit: todo mundo recebe na próxima abertura.",
+  "versao": 1,
+  "inicio": "2026-11-01T00:00:00Z",
+  "fim": "2026-12-05T19:00:00Z",
+  "fim_aproximado": true,
+  "token_2026_prazo": "2026-12-16T23:59:00Z",
+  "chances": [
+    {"rotulo": "1 em 2.000", "n": 2000, "fonte": "estimativa do dataminer Blortzen"},
+    {"rotulo": "1 em 10.000", "n": 10000, "fonte": "cenário intermediário"},
+    {"rotulo": "1 em 700 mil", "n": 700000, "fonte": "número que circula na comunidade"}
+  ],
+  "semanas": [
+    {
+      "numero": 1,
+      "inicio": "2026-11-01T00:00:00Z",
+      "fim": "2026-11-07T14:00:00Z",
+      "premios": []
+    },
+    {
+      "numero": 2,
+      "inicio": "2026-11-07T14:00:00Z",
+      "fim": "2026-11-14T14:00:00Z",
+      "premios": [
+        {"nome": "Solid Gold Lil' Uzi Vert", "tipo": "Traje"},
+        {"nome": "Lil' Uzi Crew", "tipo": "Mochila"},
+        {"nome": "So Kawaii", "tipo": "Tela de carregamento"},
+        {"nome": "Cadillac CT5-V Blackwing", "tipo": "Carro"},
+        {"nome": "London", "tipo": "Jam Track"}
+      ]
+    },
+    {"numero": 3, "inicio": "2026-11-14T14:00:00Z", "fim": "2026-11-21T14:00:00Z", "premios": []},
+    {"numero": 4, "inicio": "2026-11-21T14:00:00Z", "fim": "2026-11-28T14:00:00Z", "premios": []},
+    {"numero": 5, "inicio": "2026-11-28T14:00:00Z", "fim": "2026-12-05T19:00:00Z", "premios": []}
+  ],
+  "premios_fixos": [
+    {"nome": "Pirate Shop Access 2026", "tipo": "Token"},
+    {"nome": "Pirate Shop Access 2027", "tipo": "Token"}
+  ],
+  "agenda": [
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-07T19:00:00Z", "fim": "2026-11-07T21:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-08T02:00:00Z", "fim": "2026-11-08T04:00:00Z"},
+    {"tipo": "captain", "titulo": "Captain's Day", "inicio": "2026-11-08T03:00:00Z", "fim": "2026-11-09T03:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-14T19:00:00Z", "fim": "2026-11-14T21:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-15T02:00:00Z", "fim": "2026-11-15T04:00:00Z"},
+    {"tipo": "captain", "titulo": "Captain's Day", "inicio": "2026-11-15T03:00:00Z", "fim": "2026-11-16T03:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-21T19:00:00Z", "fim": "2026-11-21T21:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-22T02:00:00Z", "fim": "2026-11-22T04:00:00Z"},
+    {"tipo": "captain", "titulo": "Captain's Day", "inicio": "2026-11-22T03:00:00Z", "fim": "2026-11-23T03:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-28T19:00:00Z", "fim": "2026-11-28T21:00:00Z"},
+    {"tipo": "treasure", "titulo": "Treasure Hour", "inicio": "2026-11-29T02:00:00Z", "fim": "2026-11-29T04:00:00Z"},
+    {"tipo": "final", "titulo": "Evento de encerramento do Capítulo 7", "inicio": "2026-12-05T19:00:00Z", "fim": "2026-12-05T21:00:00Z", "aproximado": true}
+  ]
+}

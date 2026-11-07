@@ -1,0 +1,37 @@
+name: Gerar .exe
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependências
+        run: pip install -r requirements.txt pyinstaller==6.11.1
+      - name: Testes
+        run: python -m unittest discover -s tests
+      - name: Gerar CacaAoToken.exe
+        run: >
+          pyinstaller --noconfirm --onefile --windowed --name CacaAoToken
+          --add-data "ui;ui" --add-data "data;data"
+          --paths app app/main.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CacaAoToken
+          path: dist/CacaAoToken.exe
+      - name: Publicar versão
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/CacaAoToken.exe
