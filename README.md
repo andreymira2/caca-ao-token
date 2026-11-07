@@ -41,4 +41,4 @@ python tools/dev_server.py      # testa a tela no navegador com uma conta falsa
 python -m unittest discover -s tests
 ```
 
-Para publicar uma versão nova do .exe, crie uma tag `v0.x.y`. O GitHub Actions gera o arquivo e coloca em Releases.
+Para publicar uma versão nova do .exe, mude `VERSION` em `app/main.py` e envie para a `main`. O GitHub Actions gera o arquivo e coloca em Releases.

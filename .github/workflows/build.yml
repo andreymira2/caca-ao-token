@@ -3,7 +3,6 @@ name: Gerar .exe
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
@@ -30,8 +29,16 @@ jobs:
         with:
           name: CacaAoToken
           path: dist/CacaAoToken.exe
+      - name: Ler versão
+        id: ver
+        shell: bash
+        run: echo "v=$(grep -oP '^VERSION = \"\K[^\"]+' app/main.py)" >> "$GITHUB_OUTPUT"
       - name: Publicar versão
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.ver.outputs.v }}
+          name: Caça ao Token v${{ steps.ver.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: dist/CacaAoToken.exe
