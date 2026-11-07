@@ -76,11 +76,18 @@ class Recorder:
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)
 
-    def export_zip(self, report):
+    def windows(self):
+        return [(t["start"], t["end"]) for t in self.data["tests"]]
+
+    def export_zip(self, report, texts=None, files=()):
         stamp = datetime.fromtimestamp(self.now(), BRT).strftime("%Y-%m-%d_%Hh%M")
         path = self.store.path(f"dados-rastreador_{stamp}.zip")
         with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
             z.writestr("relatorio.json", json.dumps(report, ensure_ascii=False, indent=2))
+            for name, text in (texts or {}).items():
+                z.writestr(name, text)
+            for f in files:
+                z.write(f, "fortnite/replays/" + os.path.basename(f))
             z.writestr("gravacoes.json", json.dumps(self.data, ensure_ascii=False))
             d = self._snap_dir()
             for name in sorted(os.listdir(d)):

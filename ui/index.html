@@ -653,7 +653,8 @@ async function renderLab(data) {
          ${L.tests.length ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
            <button class="btn go" id="labZip">${ico("folder")}<span>Salvar dados completos (.zip)</span></button>
            <button class="btn ghost" id="labCopy">${ico("copy")}<span>Copiar resumo</span></button></div>
-           <p class="small" style="margin:8px 0 0">Mande o .zip na conversa com o Claude. O ID e o nome da conta são apagados antes de salvar.</p>` : ""}
+           <label class="small" style="display:flex;gap:8px;align-items:center;margin-top:10px;color:var(--soft)"><input type="checkbox" id="labReplay"> Incluir o replay da partida (tem os nomes dos outros jogadores da partida)</label>
+           <p class="small" style="margin:8px 0 0">O .zip leva o perfil e o trecho do log do Fortnite das partidas gravadas. Seu ID, nome, e-mail e IPs são apagados antes de salvar.</p>` : ""}
          <p class="small" id="labMsg" style="margin:10px 0 0">Duas ou três partidas, com quantidades diferentes de baús, já dão certeza.</p>`}`;
   // último resultado
   const last = L.tests[0];
@@ -715,7 +716,11 @@ function bindLab() {
     try { await navigator.clipboard.writeText(r.text); toast("Resumo copiado. Cole na conversa com o Claude."); }
     catch { toast("Não deu para copiar. Salvei em " + r.path); }
   });
-  $("labZip") && ($("labZip").onclick = async () => { const path = await api.lab_export(); toast("Salvo: " + path.split(/[\\/]/).pop()); });
+  $("labZip") && ($("labZip").onclick = async () => {
+    const r = await api.lab_export($("labReplay")?.checked || false);
+    const extra = r.linhas_de_log ? ` com ${fmtN(r.linhas_de_log)} linhas de log${r.replays.length ? " e o replay" : ""}` : r.pasta_encontrada ? " (o log não tinha linhas dessas partidas)" : " (pasta do Fortnite não encontrada)";
+    toast("Salvo" + extra);
+  });
 }
 
 // ---------- conta ----------

@@ -12,6 +12,7 @@ if __package__ in (None, ""):
 
 import epic  # noqa: E402
 from catalog import Catalog, same_name  # noqa: E402
+import localfiles  # noqa: E402
 from recorder import Recorder  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
@@ -271,11 +272,21 @@ class Api:
         return {"path": self._store.path("relatorio-rastreador.json"),
                 "text": json.dumps(rep, ensure_ascii=False, indent=2)}
 
-    def lab_export(self):
+    def lab_export(self, include_replay=False):
         rep = self._recorder.report(self._tracker.state["last_counters"], self._tracker.state["counter"])
-        path = self._recorder.export_zip(rep)
+        acc = self._store.load("conta.json", {})
+        windows = self._recorder.windows()
+        log = localfiles.log_excerpt(windows, (acc.get("accountId"), acc.get("displayName")))
+        reps = localfiles.replays(windows) if include_replay else []
+        rep["arquivos_do_fortnite"] = {
+            "pasta_encontrada": bool(localfiles.saved_dir() and os.path.isdir(localfiles.saved_dir())),
+            "linhas_de_log": log.count("\n") if log else 0,
+            "replays": [os.path.basename(r) for r in reps],
+        }
+        texts = {"fortnite/log-das-partidas.txt": log} if log else {}
+        path = self._recorder.export_zip(rep, texts, reps)
         self.open_data_folder()
-        return path
+        return {"path": path, **rep["arquivos_do_fortnite"]}
 
     def toggle_prize(self, name):
         return self._tracker.toggle_manual_prize(name)

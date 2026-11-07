@@ -30,7 +30,7 @@ class ExportTest(unittest.TestCase):
         res = api.lab_finish(4, 0, 0)
         self.assertTrue(res["ok"])
         self.assertEqual(res["result"]["rows"][0]["match"], ["total"])
-        path = api.lab_export()
+        path = api.lab_export()["path"]
         with zipfile.ZipFile(path) as z:
             names = z.namelist()
             self.assertIn("relatorio.json", names)
@@ -43,3 +43,23 @@ class ExportTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LocalFilesTest(unittest.TestCase):
+    def test_log_excerpt_window_and_redaction(self):
+        import localfiles
+        from datetime import datetime, timezone
+        d = tempfile.mkdtemp()
+        os.makedirs(os.path.join(d, "Logs"))
+        t0 = datetime(2026, 11, 7, 15, 50, 0, tzinfo=timezone.utc).timestamp()
+        with open(os.path.join(d, "Logs", "FortniteGame.log"), "w") as f:
+            f.write("[2026.11.07-14.00.00:000][  1]LogX: antes da partida\n")
+            f.write(f"[2026.11.07-15.51.00:000][  2]LogFort: Container opened by AndreyTeste {ACC} from 10.0.0.5:7777\n")
+            f.write("continuação sem hora\n")
+            f.write("[2026.11.07-18.00.00:000][  3]LogX: depois\n")
+        out = localfiles.log_excerpt([(t0, t0 + 300)], (ACC, "AndreyTeste"), folder=d)
+        self.assertIn("Container opened by <conta>", out)
+        self.assertIn("continuação sem hora", out)
+        self.assertNotIn("antes da partida", out)
+        self.assertNotIn("10.0.0.5", out)
+        self.assertNotIn(ACC, out)
