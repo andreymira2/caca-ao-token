@@ -15,7 +15,7 @@ from catalog import Catalog, same_name  # noqa: E402
 from recorder import Recorder  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 REPO = "andreymira2/caca-ao-token"
 EVENT_URL = f"https://raw.githubusercontent.com/{REPO}/main/data/evento.json"
 
@@ -107,8 +107,12 @@ class Api:
                 return {"ok": False, "error": self._error}
             self._error = None
             event = self.get_event()
-            self._tracker.presets = [c["padrao"] for c in event.get("contadores_padrao", [])
-                                     if c.get("tipo") == "total" and c.get("padrao")]
+            presets = [c["padrao"] for c in event.get("contadores_padrao", [])
+                       if c.get("tipo") == "total" and c.get("padrao")]
+            if presets:
+                self._tracker.presets = presets
+            for kind, pat in (event.get("trilhas_baus") or {}).items():
+                self._tracker.tracks[kind] = pat
             self._last_profile = profile
             result = self._tracker.update(profile)
             self._recorder.observe(self._tracker.prev_counters, self._tracker.state["last_counters"])
@@ -215,6 +219,9 @@ class Api:
                 pass
         acc = self._store.load("conta.json", {})
         text = json.dumps(profiles, ensure_ascii=False)
+        for prof in profiles.values():
+            if isinstance(prof, dict):
+                prof.pop("_id", None)
         for secret in (acc.get("accountId"), acc.get("displayName")):
             if secret:
                 text = text.replace(secret, "<conta>")

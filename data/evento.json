@@ -1,11 +1,17 @@
 {
   "_leia": "Horários em UTC. A ferramenta mostra em horário de Brasília. Para a semana nova, adicione os prêmios em 'semanas' e faça commit: todo mundo recebe na próxima abertura.",
-  "versao": 3,
+  "versao": 4,
   "inicio": "2026-11-01T00:00:00Z",
   "fim": "2026-12-05T19:00:00Z",
   "fim_aproximado": true,
   "token_2026_prazo": "2026-12-16T23:59:00Z",
-  "contadores_padrao": [],
+  "_trilhas": "Descoberto com o Rastreador (perfil real): o total fica nas missões treasurehunt_count, acumulado entre as metas 25/100/250/500/1000.",
+  "contadores_padrao": [{"tipo": "total", "padrao": "evento/total"}],
+  "trilhas_baus": {
+    "total": "Quest:quest_s\\d+_treasurehunt_count_\\d+/completion_quest_s\\d+_treasurehunt_count_\\d+_obj0",
+    "raros": "Quest:quest_s\\d+_treasurehunt_rarity_\\d+/completion_quest_s\\d+_treasurehunt_rarity_\\d+_obj0",
+    "sprite": "Quest:quest_s\\d+_treasurehunt_sprites_\\d+/completion_quest_s\\d+_treasurehunt_sprites_\\d+_obj0"
+  },
   "chances": [
     {"rotulo": "1 em 2.000", "n": 2000, "fonte": "estimativa do dataminer Blortzen"},
     {"rotulo": "1 em 10.000", "n": 10000, "fonte": "cenário intermediário"},

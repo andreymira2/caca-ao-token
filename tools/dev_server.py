@@ -35,8 +35,21 @@ class FakeAccount:
         if os.environ.get("FAKE_TOKEN") and self.calls == 4:
             self.items["tok"] = {"templateId": "Token:pirateshopaccess_2026", "quantity": 1}
         items = dict(self.items)
-        items["q1"] = {"templateId": "Quest:quest_s39_treasurehunters_open_chests",
-                       "attributes": {"completion_open_treasure_chests": self.chests}}
+        # Mesma estrutura do perfil real: metas 25/100/250/500/1000, valor acumulado.
+        capped = bool(os.environ.get("FAKE_CAPPED"))
+        total = 1000 if capped else self.chests
+        for i, goal in enumerate((25, 100, 250, 500, 1000), 1):
+            if total >= goal or i == 1 or total >= (25, 100, 250, 500, 1000)[i - 2]:
+                done = total >= goal
+                items[f"tc{i}"] = {"templateId": f"Quest:quest_s43_treasurehunt_count_0{i}",
+                                   "attributes": {f"completion_quest_s43_treasurehunt_count_0{i}_obj0": min(total, goal),
+                                                  "quest_state": "Claimed" if done else "Active"}}
+        items["ts5"] = {"templateId": "Quest:quest_s43_treasurehunt_sprites_05",
+                        "attributes": {"completion_quest_s43_treasurehunt_sprites_05_obj0": 70 + self.calls,
+                                       "quest_state": "Active"}}
+        items["tr5"] = {"templateId": "Quest:quest_s43_treasurehunt_rarity_05",
+                        "attributes": {"completion_quest_s43_treasurehunt_rarity_05_obj0": 100 if capped else self.rare,
+                                       "quest_state": "Claimed" if capped else "Active"}}
         items["q2"] = {"templateId": "Quest:quest_s39_weekly_eliminations",
                        "attributes": {"completion_elims": 4 + self.calls}}
         items["q4"] = {"templateId": "Quest:quest_s39_treasurehunters_rare_chests",

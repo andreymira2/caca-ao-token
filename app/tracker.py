@@ -20,6 +20,41 @@ KEYWORDS = ("chest", "treasure", "pirate", "token", "shopaccess", "captain",
 CHEST_WORDS = ("chest", "treasure", "sprite", "bau", "loot")
 QUEST_PREFIXES = ("Quest:", "ChallengeBundle")
 
+# Trilhas de baús do Treasure Hunters, descobertas com o Rastreador (perfil real, temporada 43).
+# Cada trilha tem várias missões (metas 25/100/250/500/1000 no total); o número é
+# acumulado entre as metas, então o maior valor entre elas é o total atual.
+# Quando a última meta é resgatada, o jogo para de contar.
+EVENT_TRACKS = {
+    "total": r"Quest:quest_s\d+_treasurehunt_count_\d+/completion_quest_s\d+_treasurehunt_count_\d+_obj0",
+    "raros": r"Quest:quest_s\d+_treasurehunt_rarity_\d+/completion_quest_s\d+_treasurehunt_rarity_\d+_obj0",
+    "sprite": r"Quest:quest_s\d+_treasurehunt_sprites_\d+/completion_quest_s\d+_treasurehunt_sprites_\d+_obj0",
+}
+EVENT_KEY = "evento/{}"
+
+
+def event_tracks(profile, patterns=EVENT_TRACKS):
+    """Valor atual de cada trilha e se ela já chegou na última meta."""
+    found = {}
+    for item in (profile.get("items") or {}).values():
+        tid = item.get("templateId", "")
+        attrs = item.get("attributes") or {}
+        for attr, value in attrs.items():
+            if not attr.startswith("completion_") or not isinstance(value, (int, float)):
+                continue
+            key = f"{tid}/{attr}"
+            for kind, pat in patterns.items():
+                if re.fullmatch(pat, key):
+                    t = found.setdefault(kind, {"value": 0, "quests": 0, "open": 0})
+                    t["value"] = max(t["value"], value)
+                    t["quests"] += 1
+                    if attrs.get("quest_state") != "Claimed":
+                        t["open"] += 1
+    for t in found.values():
+        t["capped"] = t["open"] == 0  # todas as metas resgatadas: o jogo parou de contar
+        del t["open"]
+    return found
+
+
 COSMETIC_PREFIXES = ("Athena", "Cosmetic", "Sparks", "Vehicle", "Juno")
 NOT_DROPS = ("Quest:", "ChallengeBundle", "ChallengeBundleSchedule:")
 
@@ -113,7 +148,8 @@ class Tracker:
         if "selected" in self.state:
             self.state.pop("selected")
             self.state.setdefault("counter", None)
-        self.presets = []  # padrões (regex) de contadores confirmados, vindos do evento.json
+        self.presets = [r"evento/total"]  # contadores confirmados; o evento.json pode trocar
+        self.tracks = dict(EVENT_TRACKS)
         self.session_start = self.now()
         self.session_gained = 0
         self.prev_counters = dict(self.state["last_counters"])
@@ -121,6 +157,10 @@ class Tracker:
     # ---------- atualização ----------
     def update(self, profile):
         counters = extract_counters(profile)
+        tracks = event_tracks(profile, self.tracks)
+        for kind, t in tracks.items():
+            counters[EVENT_KEY.format(kind)] = t["value"]
+        self.state["evento"] = tracks
         items = extract_items(profile)
         ts = self.now()
         st = self.state
@@ -153,7 +193,9 @@ class Tracker:
         st["last_items"] = items
         st["last_refresh"] = ts
         c = st["counter"]
-        if c is None or (not c.get("confirmed") and c.get("source") != "padrao"):
+        # A trilha oficial do evento vence qualquer palpite antigo ainda não conferido.
+        if c is None or (not c.get("confirmed") and c.get("source") != "padrao") or \
+                (c.get("source") == "padrao" and c["key"] != self.preset_key()):
             preset = self.preset_key()
             if preset:
                 self._use(preset, confirmed=True, source="padrao")
@@ -204,8 +246,8 @@ class Tracker:
                                  "confirmed_at": self.now() if confirmed else None}
 
     def set_counter(self, key, confirmed=True, source="manual"):
-        # Fora das missões, só aceita um contador que passou num teste do rastreador.
-        if not key.startswith(QUEST_PREFIXES) and source != "teste":
+        # Fora das missões, só aceita a trilha do evento ou um contador que passou num teste.
+        if not key.startswith(QUEST_PREFIXES + ("evento/",)) and source != "teste":
             raise ValueError("Só contadores de missão podem contar baús.")
         self._use(key, confirmed, source)
         self.store.save("estado.json", self.state)
@@ -258,6 +300,7 @@ class Tracker:
             "has_counter": bool(self.state["counter"]),
             "counter": self.state["counter"],
             "has_data": bool(self.state["last_counters"]),
+            "evento": self.state.get("evento") or {},
             "last_refresh": self.state.get("last_refresh"),
             "per_day": self.per_day(),
         }

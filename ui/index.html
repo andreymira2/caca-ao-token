@@ -460,11 +460,15 @@ function renderChest() {
     chip = c.confirmed
       ? `<span class="chip ok" title="${c.source === "padrao" ? "Contador já confirmado para todo mundo" : "Conferido"}">${ico("check")}${okLabel}</span>`
       : `<span class="chip warn">${ico("alert")}Falta conferir</span>`;
-    body = `<div class="chest-num num ${c.confirmed ? "" : "unsure"}" id="chestNum">${fmtN(s.total)}</div>`;
+    const capped = c.key === "evento/total" && s.evento?.total?.capped;
+    if (capped) chip = `<span class="chip warn" title="O jogo para de contar depois da última meta">${ico("flag")}Limite do jogo</span>`;
+    body = `<div class="chest-num num ${c.confirmed ? "" : "unsure"}" id="chestNum">${fmtN(s.total)}${capped ? "+" : ""}</div>`;
+    if (capped) body += `<p class="small" style="margin:-4px 0 10px">Você completou a meta de ${fmtN(s.total)} baús e o jogo parou de contar. A partir daqui, só os baús Sprite continuam sendo contados.</p>`;
   }
   body += `<div class="stats">
       <div class="stat"><div class="v num">${fmtN(s.today)}</div><div class="l">${ico("sun")}Hoje</div></div>
       <div class="stat"><div class="v num">${s.rate == null ? "…" : String(s.rate).replace(".", ",")}</div><div class="l">${ico("bolt")}${s.rate == null ? "Por hora · após 10 min" : "Por hora"}</div></div>
+      ${["raros", "sprite"].filter(k => s.evento?.[k]).map(k => `<div class="stat"><div class="v num">${fmtN(s.evento[k].value)}${s.evento[k].capped ? "+" : ""}</div><div class="l">${ico(k === "raros" ? "gift" : "sun")}${k === "raros" ? "Raros" : "Sprite"}${s.evento[k].capped ? " · completo" : ""}</div></div>`).join("")}
       ${last.length > 1 ? `<div class="days" title="Baús por dia">${bars}</div>` : ""}
     </div>`;
   el.innerHTML = head.replace('<span id="chestChip"></span>', chip) + body + checkBlock(c);
@@ -592,7 +596,7 @@ function renderOdds() {
   $("oddsPanel").innerHTML = `<h2 class="ph">${ico("dice")}Chance de já ter o token</h2>
     <div class="odds-main"><span class="token">${ico("skull")}</span><span class="v num">${pct(p(main))}</span><span class="muted">se for ${esc(main.rotulo)}</span></div>
     ${ch.map(c => `<div class="odds-row"><span>${esc(c.rotulo)}</span><span class="track"><i style="width:${Math.min(100, p(c) * 100)}%"></i></span><span class="pct num">${pct(p(c))}</span></div>`).join("")}
-    <p class="small" style="margin:12px 0 0">Com ${fmtN(n)} baús. A Epic não divulgou a chance real.</p>`;
+    <p class="small" style="margin:12px 0 0">Com ${S.summary?.evento?.total?.capped && S.summary?.counter?.key === "evento/total" ? "pelo menos " : ""}${fmtN(n)} baús. A Epic não divulgou a chance real.</p>`;
 }
 
 // ---------- agenda ----------

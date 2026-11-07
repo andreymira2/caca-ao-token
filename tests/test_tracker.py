@@ -98,3 +98,28 @@ class TrackerTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EventTracksTest(unittest.TestCase):
+    def quest(self, kind, n, value, state):
+        return {"templateId": f"Quest:quest_s43_treasurehunt_{kind}_0{n}",
+                "attributes": {f"completion_quest_s43_treasurehunt_{kind}_0{n}_obj0": value, "quest_state": state}}
+
+    def test_total_is_max_across_goals_and_cap(self):
+        from tracker import event_tracks
+        prof = {"items": {"a": self.quest("count", 1, 25, "Claimed"), "b": self.quest("count", 2, 100, "Claimed"),
+                          "c": self.quest("count", 3, 137, "Active"), "d": self.quest("sprites", 5, 74, "Active"),
+                          "e": self.quest("rarity", 5, 100, "Claimed")}}
+        t = event_tracks(prof)
+        self.assertEqual(t["total"], {"value": 137, "quests": 3, "capped": False})
+        self.assertTrue(t["raros"]["capped"])
+        self.assertEqual(t["sprite"]["value"], 74)
+
+    def test_tracker_uses_event_total_over_old_guess(self):
+        tr = Tracker(Store(tempfile.mkdtemp()))
+        tr.state["counter"] = {"key": "Quest:quest_s43_spritebackbling_treasurechest/completion_x", "total": 1,
+                               "last": 1, "confirmed": False}
+        tr.update({"items": {"c": self.quest("count", 3, 137, "Active")}})
+        self.assertEqual((tr.state["counter"]["key"], tr.total()), ("evento/total", 137))
+        tr.update({"items": {"c": self.quest("count", 3, 140, "Active")}})
+        self.assertEqual(tr.total(), 140)
