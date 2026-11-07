@@ -183,6 +183,32 @@
   .legend span { display: flex; align-items: center; gap: 6px; }
   .legend i { width: 12px; height: 12px; border-radius: 3px; display: block; }
 
+  /* rastreador */
+  .switch { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border: 2px solid rgba(255,255,255,.2); border-radius: 6px; background: rgba(0,0,30,.35); text-align: left; }
+  .switch .knob { position: relative; width: 64px; height: 34px; border-radius: 34px; background: rgba(255,255,255,.18); transition: background .2s; flex: none; }
+  .switch .knob::after { content: ""; position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: transform .25s cubic-bezier(.2,.9,.3,1); }
+  .switch.on { border-color: var(--yellow); }
+  .switch.on .knob { background: var(--yellow); }
+  .switch.on .knob::after { transform: translateX(30px); background: var(--yellow-ink); }
+  .switch .lbl { font: 400 30px/1 var(--display); text-transform: uppercase; transform: skewX(-7deg); }
+  .rec { display: flex; align-items: center; gap: 8px; }
+  .rec i { width: 10px; height: 10px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 4px rgba(255,106,92,.25); animation: blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .35; } }
+  .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+  .nums label { display: grid; gap: 6px; font: 700 12px/1 var(--ui); text-transform: uppercase; letter-spacing: .05em; color: var(--soft); }
+  .nums input.game { width: 100%; }
+  .krow { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .krow:last-child { border-bottom: 0; }
+  .krow code { font: 12px/1.35 Consolas, monospace; color: var(--soft); word-break: break-all; }
+  .krow .d { font: 400 20px/1 var(--display); }
+  .krow .d.hit { color: var(--yellow); }
+  .hits { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .hits .track { flex: 1; height: 8px; border-radius: 8px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .hits .track i { display: block; height: 100%; background: var(--yellow); }
+  .kind { font: 400 15px/1 var(--display); text-transform: uppercase; color: var(--soft); margin: 14px 0 4px; }
+  .kind:first-child { margin-top: 0; }
+  .mini { padding: 6px 10px; font-size: 13px; }
+
   /* conta */
   .steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
   .steps li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
@@ -216,7 +242,7 @@
     .c7, .c5, .c8, .c4, .c6 { grid-column: span 12; }
     header { flex-wrap: wrap; gap: 14px; }
   }
-  @media (max-width: 1100px) { header { gap: 16px; padding: 12px 20px; } nav button { padding: 9px 12px; } .who { display: none; } }
+  @media (max-width: 1100px) { header { gap: 14px; padding: 12px 20px; } nav button { padding: 9px 11px; } .who, #updated { display: none; } .mark { white-space: nowrap; font-size: 20px; } }
   /* Janela baixa: tudo do painel cabe sem rolar. */
   @media (max-height: 760px) {
     main { padding: 14px 20px 18px; }
@@ -265,6 +291,11 @@
     <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/></symbol>
     <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8"/><path d="M6 4a2 2 0 0 0-2 2v2h4V6a2 2 0 0 0-2-2zM8 8v10a2 2 0 0 1-4 0"/><path d="M11 9h5M11 13h5"/></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12l6-6"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></symbol>
     <symbol id="i-link" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
   </defs>
 </svg>
@@ -276,6 +307,7 @@
       <button data-tab="painel" class="on"><svg class="i"><use href="#i-chest"/></svg><span>Painel</span></button>
       <button data-tab="premios"><svg class="i"><use href="#i-gift"/></svg><span>Prêmios</span></button>
       <button data-tab="agenda"><svg class="i"><use href="#i-calendar"/></svg><span>Agenda</span></button>
+      <button data-tab="rastreador"><svg class="i"><use href="#i-radar"/></svg><span>Rastreador</span></button>
       <button data-tab="conta"><svg class="i"><use href="#i-user"/></svg><span>Conta</span></button>
     </nav>
     <div class="top-right">
@@ -315,6 +347,17 @@
         <span><i style="background:rgba(255,255,255,.3)"></i>Troca dos prêmios</span>
         <span><i style="background:var(--r-legendary)"></i>Encerramento</span>
         <span>Horário de Brasília · * horário aproximado</span>
+      </div>
+    </section>
+
+    <!-- ===== RASTREADOR ===== -->
+    <section class="view" id="v-rastreador">
+      <div class="grid">
+        <div class="panel c5" id="labTest"></div>
+        <div class="panel c7" id="labResult"></div>
+        <div class="panel c7" id="labRank"></div>
+        <div class="panel c5" id="labLive"></div>
+        <div class="panel c12" id="labHistory"></div>
       </div>
     </section>
 
@@ -375,6 +418,7 @@ function tab(name) {
   if (name === "premios") renderPrizesFull();
   if (name === "agenda") renderAgenda();
   if (name === "conta") renderAccount();
+  if (name === "rastreador") renderLab();
 }
 
 // ---------- eventos ----------
@@ -412,8 +456,9 @@ function renderChest() {
     chip = `<span class="chip warn">${ico("alert")}Contador não encontrado</span>`;
     body = `<div class="chest-num unsure">–</div>`;
   } else {
+    const okLabel = { padrao: "Contador padrão", teste: "Confirmado por teste" }[c.source] || "Confere com o jogo";
     chip = c.confirmed
-      ? `<span class="chip ok" title="Conferido com o número do jogo">${ico("check")}Confere com o jogo</span>`
+      ? `<span class="chip ok" title="${c.source === "padrao" ? "Contador já confirmado para todo mundo" : "Conferido"}">${ico("check")}${okLabel}</span>`
       : `<span class="chip warn">${ico("alert")}Falta conferir</span>`;
     body = `<div class="chest-num num ${c.confirmed ? "" : "unsure"}" id="chestNum">${fmtN(s.total)}</div>`;
   }
@@ -434,7 +479,8 @@ function checkBlock(c) {
       <div class="row" style="margin-top:10px"><button class="btn ghost" data-act="cancel"><span>Voltar</span></button></div></div>`;
   }
   if (c?.confirmed && S.checkMode !== "open") {
-    return `<div class="check"><div class="row"><span class="small">Conferido em ${ddmm(c.confirmed_at * 1000)} com ${fmtN(c.game_value)} baús no jogo.</span>
+    const why = c.source === "padrao" ? "Contador padrão do app, já testado." : c.source === "teste" ? `Confirmado no Rastreador em ${ddmm(c.confirmed_at * 1000)}.` : `Conferido em ${ddmm(c.confirmed_at * 1000)} com ${fmtN(c.game_value)} baús no jogo.`;
+    return `<div class="check"><div class="row"><span class="small">${why}</span>
       <button class="btn ghost" data-act="open" style="margin-left:auto"><span>Conferir de novo</span></button></div></div>`;
   }
   const quick = c && S.checkMode !== "open"
@@ -577,6 +623,97 @@ function renderAgenda() {
   today?.closest(".day")?.scrollIntoView({ inline: "start", block: "nearest" });
 }
 
+// ---------- rastreador ----------
+let LAB = null;
+const KIND_LABEL = { total: "Total de baús", raros: "Baús raros", sprite: "Baús Sprite" };
+async function renderLab(data) {
+  const typed = ["labTotal", "labRare", "labSprite"].map(id => $(id)?.value);
+  LAB = data || await api.lab_state();
+  const L = LAB, cur = L.counter?.key;
+  // teste
+  $("labTest").innerHTML = `<h2 class="ph">${ico("radar")}Rastreador</h2>
+    <button class="switch ${L.active ? "on" : ""}" id="labToggle" role="switch" aria-checked="${!!L.active}">
+      <span class="knob"></span><span class="lbl">${L.active ? "Ligado" : "Desligado"}</span>
+    </button>
+    ${L.active
+      ? `<p class="rec" style="margin:14px 0 4px"><i></i><b>Gravando desde ${hhmm(L.active.start * 1000)}</b>&nbsp;<span class="muted">· ${L.active.changes} mudança(s) vista(s)</span></p>
+         <p class="muted" style="margin:0">Jogue normalmente. Quando voltar ao lobby, desligue.</p>
+         <div class="nums">
+           <label>Baús (opcional)<input class="game num" id="labTotal" inputmode="numeric" placeholder="–"></label>
+           <label>Raros<input class="game num" id="labRare" inputmode="numeric" placeholder="–"></label>
+           <label>Sprite<input class="game num" id="labSprite" inputmode="numeric" placeholder="–"></label>
+         </div>
+         <p class="small" id="labMsg" style="margin:0">Se contar os baús da partida, o app marca sozinho quais contadores bateram. Se não contar, tudo bem: os dados são gravados do mesmo jeito.</p>
+         <button class="btn ghost mini" id="labCancel" style="margin-top:12px"><span>Descartar esta gravação</span></button>`
+      : `<p class="muted" style="margin:14px 0 0">Ligue no lobby, antes de entrar na partida. Desligue quando voltar. O app guarda o perfil inteiro antes e depois, para filtrar tudo depois.</p>
+         ${L.tests.length ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+           <button class="btn go" id="labZip">${ico("folder")}<span>Salvar dados completos (.zip)</span></button>
+           <button class="btn ghost" id="labCopy">${ico("copy")}<span>Copiar resumo</span></button></div>
+           <p class="small" style="margin:8px 0 0">Mande o .zip na conversa com o Claude. O ID e o nome da conta são apagados antes de salvar.</p>` : ""}
+         <p class="small" id="labMsg" style="margin:10px 0 0">Duas ou três partidas, com quantidades diferentes de baús, já dão certeza.</p>`}`;
+  // último resultado
+  const last = L.tests[0];
+  $("labResult").innerHTML = `<h2 class="ph">${ico("check")}Última gravação${last ? `<span class="chip">${last.counted ? fmtN(last.declared.total) + " baús · " : ""}${hhmm(last.start * 1000)}–${hhmm(last.end * 1000)}</span>` : ""}</h2>` + (last
+    ? (last.rows.length ? last.rows.slice(0, 10).map(r => `<div class="krow"><code>${esc(r.key)}</code>
+        <span class="d num ${r.match.length ? "hit" : ""}">+${fmtN(r.delta)}</span>
+        <span>${r.match.length ? r.match.map(m => `<span class="chip warn">${esc(KIND_LABEL[m])}</span>`).join(" ") : ""}</span></div>`).join("")
+        : `<p class="muted">Nenhum contador mudou. A Epic às vezes só atualiza depois que a partida termina: volte ao lobby, espere um pouco e teste de novo.</p>`)
+    : `<p class="muted">Ainda não há testes. Os contadores que subirem durante a partida aparecem aqui, e os que baterem com os seus baús ficam em amarelo.</p>`);
+  // ranking
+  const kinds = Object.keys(L.ranking).filter(k => L.ranking[k].length);
+  $("labRank").innerHTML = `<h2 class="ph">${ico("dice")}Mais confiáveis</h2>` + (kinds.length ? kinds.map(k => `<div class="kind">${esc(KIND_LABEL[k])}</div>` +
+    L.ranking[k].slice(0, 4).map(r => `<div class="krow"><code>${esc(r.key)}</code>
+      <span class="hits"><span class="track"><i style="width:${100 * r.hits / r.tests}%"></i></span><span class="num">${r.hits}/${r.tests}</span></span>
+      <span>${k === "total" ? (r.key === cur ? `<span class="chip ok">${ico("check")}Em uso</span>` : `<button class="btn ghost mini" data-use="${esc(r.key)}"><span>Usar</span></button>`) : ""}</span></div>`).join("")).join("")
+    : `<p class="muted">${L.tests.some(t => t.counted) ? "Nenhum contador bateu com os baús contados ainda. Faça mais uma partida contando." : "Aparece quando você contar os baús de uma partida. Um contador que acerta todas é o certo."}</p>`);
+  // ao vivo
+  $("labLive").innerHTML = `<h2 class="ph">${ico("refresh")}Mudanças recentes</h2>` + (L.recent.length
+    ? L.recent.slice(0, 12).map(r => `<div class="krow"><code>${esc(r.key)}</code><span class="d num">${r.delta == null ? "" : (r.delta > 0 ? "+" : "") + fmtN(r.delta)}</span><span class="small num">${hhmm(r.ts * 1000)}</span></div>`).join("")
+    : `<p class="muted">Cada número da conta que mudar entre uma leitura e outra aparece aqui.</p>`);
+  // histórico
+  $("labHistory").innerHTML = `<h2 class="ph">${ico("calendar")}Gravações<span class="chip">${L.tests.length}</span></h2>` + (L.tests.length
+    ? `<table><thead><tr><th>Quando</th><th class="r">Total</th><th class="r">Raros</th><th class="r">Sprite</th><th>Resultado</th><th></th></tr></thead><tbody>${L.tests.map((t, i) => `<tr>
+        <td class="num">${weekday(t.end * 1000)} ${ddmm(t.end * 1000)} · ${hhmm(t.start * 1000)}–${hhmm(t.end * 1000)}</td>
+        <td class="r num">${t.counted ? t.declared.total : "–"}</td><td class="r num">${t.counted ? t.declared.raros : "–"}</td><td class="r num">${t.counted ? t.declared.sprite : "–"}</td>
+        <td>${t.counted ? (t.rows.filter(r => r.match.length).length || "nenhum") : `${t.rows.length} mudaram`}</td>
+        <td class="r"><button class="btn ghost mini" data-del="${i}" title="Apagar este teste">${ico("trash")}</button></td></tr>`).join("")}</tbody></table>`
+    : `<p class="muted">Nenhum teste ainda.</p>`);
+  ["labTotal", "labRare", "labSprite"].forEach((id, i) => { if ($(id) && typed[i]) $(id).value = typed[i]; });
+  bindLab();
+}
+function bindLab() {
+  const msg = t => { if ($("labMsg")) $("labMsg").textContent = t; };
+  $("labCancel") && ($("labCancel").onclick = async () => { if (confirm("Descartar esta gravação?")) renderLab(await api.lab_cancel()); });
+  $("labToggle").onclick = async () => {
+    const b = $("labToggle"); b.disabled = true; msg("Lendo a conta…");
+    try {
+      if (!LAB.active) {
+        const r = await api.lab_start(); if (!r.ok) return msg(r.error);
+        toast("Rastreador ligado. Boa partida!"); renderLab(r);
+      } else {
+        const r = await api.lab_finish($("labTotal").value || 0, $("labRare").value || 0, $("labSprite").value || 0);
+        if (!r.ok) return msg(r.error);
+        const moved = r.result.rows.length, hits = r.result.rows.filter(x => x.match.includes("total")).length;
+        toast(r.result.counted ? (hits ? `${hits} contador(es) bateram com ${r.result.declared.total} baús` : "Nenhum contador bateu desta vez")
+                               : `Rastreador desligado. ${moved} contador(es) mudaram.`);
+        renderLab(r); S.summary = await api.dashboard(); renderAll();
+      }
+    } finally { if ($("labToggle")) $("labToggle").disabled = false; }
+  };
+  document.querySelectorAll("#v-rastreador [data-use]").forEach(b => b.onclick = async () => {
+    S.summary = await api.lab_use(b.dataset.use); toast("Contador em uso trocado"); renderAll(); renderLab();
+  });
+  document.querySelectorAll("#v-rastreador [data-del]").forEach(b => b.onclick = async () => {
+    if (!confirm("Apagar este teste?")) return; renderLab(await api.lab_delete(+b.dataset.del));
+  });
+  $("labCopy") && ($("labCopy").onclick = async () => {
+    const r = await api.lab_report();
+    try { await navigator.clipboard.writeText(r.text); toast("Resumo copiado. Cole na conversa com o Claude."); }
+    catch { toast("Não deu para copiar. Salvei em " + r.path); }
+  });
+  $("labZip") && ($("labZip").onclick = async () => { const path = await api.lab_export(); toast("Salvo: " + path.split(/[\\/]/).pop()); });
+}
+
 // ---------- conta ----------
 async function renderAccount() {
   const s = S.status = await api.status();
@@ -652,6 +789,7 @@ async function refresh() {
     S.status = await api.status(); S.summary = await api.dashboard(); S.prizes = await api.prizes();
     renderAll(); rollNumber();
     if ($("v-premios").classList.contains("on") && r.new_items?.length) renderPrizesFull();
+    if ($("v-rastreador").classList.contains("on")) renderLab();
   } finally { b.disabled = false; b.classList.remove("spin"); }
 }
 $("refreshBtn").onclick = refresh;

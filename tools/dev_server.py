@@ -19,13 +19,17 @@ from tracker import Store  # noqa: E402
 class FakeAccount:
     def __init__(self):
         self.chests = 37
+        self.rare = 3
+        self.xp = 100
         self.calls = 0
         self.items = {f"i{n}": {"templateId": f"AthenaCharacter:cid_{n:03d}", "quantity": 1} for n in range(40)}
 
     def profile(self):
         self.calls += 1
         if self.calls > 1:
-            self.chests += random.randint(1, 6)
+            self.chests += 5  # previsível, para testar o Rastreador
+            self.rare += 1
+            self.xp += 5 if self.calls % 2 else 9
         if self.calls == 3:
             self.items["new1"] = {"templateId": "AthenaLoadingScreen:lsid_sokawaii", "quantity": 1}
         if os.environ.get("FAKE_TOKEN") and self.calls == 4:
@@ -35,9 +39,11 @@ class FakeAccount:
                        "attributes": {"completion_open_treasure_chests": self.chests}}
         items["q2"] = {"templateId": "Quest:quest_s39_weekly_eliminations",
                        "attributes": {"completion_elims": 4 + self.calls}}
+        items["q4"] = {"templateId": "Quest:quest_s39_treasurehunters_rare_chests",
+                       "attributes": {"completion_open_rare_chests": self.rare}}
         items["q3"] = {"templateId": "Quest:quest_s39_mapfragment_w2",
                        "attributes": {"completion_collect_map_fragment": 1}}
-        return {"items": items, "stats": {"attributes": {"book_level": 61, "accountLevel": 412, "season_num": 39}}}
+        return {"items": items, "stats": {"attributes": {"book_level": 61, "accountLevel": 412, "season_num": 39, "book_xp": self.xp}}}
 
 
 folder = tempfile.mkdtemp(prefix="caca-dev-")

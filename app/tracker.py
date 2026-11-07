@@ -6,6 +6,7 @@ marca qual (ou quais) contam baús. O total é somado a partir daí.
 """
 import json
 import os
+import re
 import time
 from datetime import datetime, timedelta, timezone
 
@@ -112,6 +113,7 @@ class Tracker:
         if "selected" in self.state:
             self.state.pop("selected")
             self.state.setdefault("counter", None)
+        self.presets = []  # padrões (regex) de contadores confirmados, vindos do evento.json
         self.session_start = self.now()
         self.session_gained = 0
         self.prev_counters = dict(self.state["last_counters"])
@@ -150,10 +152,15 @@ class Tracker:
         st["last_counters"] = counters
         st["last_items"] = items
         st["last_refresh"] = ts
-        if st["counter"] is None:
-            best = self.chest_candidates()
-            if best:
-                self._use(best[0]["key"], confirmed=False)
+        c = st["counter"]
+        if c is None or (not c.get("confirmed") and c.get("source") != "padrao"):
+            preset = self.preset_key()
+            if preset:
+                self._use(preset, confirmed=True, source="padrao")
+            elif c is None:
+                best = self.chest_candidates()
+                if best:
+                    self._use(best[0]["key"], confirmed=False)
         self.store.save("estado.json", st)
         return {"gained": gained, "new_items": new_items,
                 "token": [t for t in new_items if looks_like_token(t)]}
@@ -180,17 +187,27 @@ class Tracker:
         hits.sort(key=lambda r: not r["chest"])
         return hits
 
-    def _use(self, key, confirmed):
+    def preset_key(self):
+        """Primeiro contador da conta que bate com um padrão confirmado."""
+        for pat in self.presets:
+            rx = re.compile(pat)
+            hit = next((k for k in self.state["last_counters"] if rx.fullmatch(k)), None)
+            if hit:
+                return hit
+        return None
+
+    def _use(self, key, confirmed, source="manual"):
         value = self.state["last_counters"].get(key, 0)
         # O contador do jogo já é o total do evento: o valor atual entra inteiro.
-        self.state["counter"] = {"key": key, "total": value, "last": value,
+        self.state["counter"] = {"key": key, "total": value, "last": value, "source": source,
                                  "confirmed": confirmed, "game_value": value if confirmed else None,
                                  "confirmed_at": self.now() if confirmed else None}
 
-    def set_counter(self, key, confirmed=True):
-        if not key.startswith(QUEST_PREFIXES):
+    def set_counter(self, key, confirmed=True, source="manual"):
+        # Fora das missões, só aceita um contador que passou num teste do rastreador.
+        if not key.startswith(QUEST_PREFIXES) and source != "teste":
             raise ValueError("Só contadores de missão podem contar baús.")
-        self._use(key, confirmed)
+        self._use(key, confirmed, source)
         self.store.save("estado.json", self.state)
 
     def confirm_counter(self):

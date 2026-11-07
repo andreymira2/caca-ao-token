@@ -12,9 +12,10 @@ if __package__ in (None, ""):
 
 import epic  # noqa: E402
 from catalog import Catalog, same_name  # noqa: E402
+from recorder import Recorder  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
-VERSION = "0.2.1"
+VERSION = "0.3.0"
 REPO = "andreymira2/caca-ao-token"
 EVENT_URL = f"https://raw.githubusercontent.com/{REPO}/main/data/evento.json"
 
@@ -31,11 +32,13 @@ class Api:
         self._store = store or Store()
         self._tracker = Tracker(self._store)
         self._catalog = Catalog(self._store)
+        self._recorder = Recorder(self._store, self._tracker.now)
         self._lock = threading.Lock()
         self._session = None
         self._error = None
         self._event = None
         self._profile_source = profile_source  # usado nos testes
+        self._last_profile = None
         device = self._store.load("login.json", None)
         if device:
             self._session = epic.Session(device)
@@ -103,7 +106,12 @@ class Api:
                     self._error = str(e)
                 return {"ok": False, "error": self._error}
             self._error = None
+            event = self.get_event()
+            self._tracker.presets = [c["padrao"] for c in event.get("contadores_padrao", [])
+                                     if c.get("tipo") == "total" and c.get("padrao")]
+            self._last_profile = profile
             result = self._tracker.update(profile)
+            self._recorder.observe(self._tracker.prev_counters, self._tracker.state["last_counters"])
             return {"ok": True, **result,
                     "new_names": [(self._catalog.item(t) or {}).get("name") or t for t in result["new_items"]]}
 
@@ -195,6 +203,72 @@ class Api:
             "fixos": [mark(p) for p in event.get("premios_fixos", [])],
             "historico": list(reversed(drop_names)),
         }
+
+    # ---------- rastreador ----------
+    def _profiles_snapshot(self):
+        """Perfil completo (athena e common_core), sem o ID e o nome da conta."""
+        profiles = {"athena": self._last_profile}
+        if self._session and not self._profile_source:
+            try:
+                profiles["common_core"] = epic.query_profile(self._session.access(), "common_core")
+            except epic.EpicError:
+                pass
+        acc = self._store.load("conta.json", {})
+        text = json.dumps(profiles, ensure_ascii=False)
+        for secret in (acc.get("accountId"), acc.get("displayName")):
+            if secret:
+                text = text.replace(secret, "<conta>")
+        return json.loads(text)
+
+    def lab_state(self):
+        return {**self._recorder.state(), "counter": self._tracker.state["counter"]}
+
+    def lab_start(self):
+        r = self.refresh()
+        if not r.get("ok"):
+            return r
+        self._recorder.start(self._tracker.state["last_counters"], self._profiles_snapshot())
+        return {"ok": True, **self.lab_state()}
+
+    def lab_finish(self, total, raros=0, sprite=0):
+        try:
+            declared = {"total": int(total or 0), "raros": int(raros or 0), "sprite": int(sprite or 0)}
+        except ValueError:
+            return {"ok": False, "error": "Use só números."}
+        r = self.refresh()
+        if not r.get("ok"):
+            return r
+        try:
+            result = self._recorder.finish(self._tracker.state["last_counters"], declared,
+                                           self._profiles_snapshot())
+        except ValueError as e:
+            return {"ok": False, "error": str(e)}
+        return {"ok": True, "result": result, **self.lab_state()}
+
+    def lab_cancel(self):
+        self._recorder.cancel()
+        return self.lab_state()
+
+    def lab_delete(self, index):
+        # A tela lista do mais novo para o mais antigo.
+        self._recorder.delete_test(len(self._recorder.data["tests"]) - 1 - int(index))
+        return self.lab_state()
+
+    def lab_use(self, key):
+        self._tracker.set_counter(key, confirmed=True, source="teste")
+        return self._tracker.summary()
+
+    def lab_report(self):
+        rep = self._recorder.report(self._tracker.state["last_counters"], self._tracker.state["counter"])
+        self._store.save("relatorio-rastreador.json", rep)
+        return {"path": self._store.path("relatorio-rastreador.json"),
+                "text": json.dumps(rep, ensure_ascii=False, indent=2)}
+
+    def lab_export(self):
+        rep = self._recorder.report(self._tracker.state["last_counters"], self._tracker.state["counter"])
+        path = self._recorder.export_zip(rep)
+        self.open_data_folder()
+        return path
 
     def toggle_prize(self, name):
         return self._tracker.toggle_manual_prize(name)
