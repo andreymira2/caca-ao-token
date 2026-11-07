@@ -16,7 +16,7 @@ import localfiles  # noqa: E402
 from recorder import Recorder  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 REPO = "andreymira2/caca-ao-token"
 EVENT_URL = f"https://raw.githubusercontent.com/{REPO}/main/data/evento.json"
 
