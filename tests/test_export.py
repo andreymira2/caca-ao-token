@@ -52,7 +52,7 @@ class LocalFilesTest(unittest.TestCase):
         d = tempfile.mkdtemp()
         os.makedirs(os.path.join(d, "Logs"))
         t0 = datetime(2026, 11, 7, 15, 50, 0, tzinfo=timezone.utc).timestamp()
-        with open(os.path.join(d, "Logs", "FortniteGame.log"), "w") as f:
+        with open(os.path.join(d, "Logs", "FortniteGame.log"), "w", encoding="utf-8") as f:
             f.write("[2026.11.07-14.00.00:000][  1]LogX: antes da partida\n")
             f.write(f"[2026.11.07-15.51.00:000][  2]LogFort: Container opened by AndreyTeste {ACC} from 10.0.0.5:7777\n")
             f.write("continuação sem hora\n")
