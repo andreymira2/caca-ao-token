@@ -79,7 +79,8 @@
   .view { display: none; } .view.on { display: block; }
   .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
   .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,20,.25); }
-  .slant, .ph, .chest-num, .clock, .day h3, .ev .tm, .item .nm, .stat .v, .odds-main .v, .up-next .big { font-style: oblique 9deg; font-synthesis: style; }
+  /* Inclinação dos títulos do lobby: a Anton não tem itálico, então inclina com skew. */
+  .ph, .chest-num, .clock, .day h3, .ev .tm, .item .nm, .stat .v, .odds-main .v, .up-next .big { transform: skewX(-7deg); transform-origin: 0 100%; }
   .ph { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font: 400 18px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--soft); }
   .ph svg.i { color: var(--yellow); }
   .ph .chip { margin-left: auto; }
@@ -230,6 +231,7 @@
     .next { margin-top: 10px; padding-top: 10px; gap: 6px; }
     .shop.row .item { aspect-ratio: auto; height: 150px; }
     .shop.row .item .chestno { display: none; }
+    .shop.row .item .nm { font-size: 13px; }
     .shop.row .item img, .shop.row .item .ph-art { inset: 0 0 34% 0; height: 66%; }
     .odds-main .v { font-size: 44px; }
     .odds-row { margin-top: 6px; }
@@ -502,7 +504,7 @@ function itemTile(p, clickable = true) {
   return `<button class="item ${r} ${p.obtido ? "got" : ""}" data-prize="${esc(p.nome)}" ${p.auto || !clickable ? "disabled" : ""} title="${title}">
     ${art}${p.auto ? `<span class="chestno">baú ${fmtN(p.bau)}</span>` : ""}
     <span class="own">${ico("check")}Na conta</span>
-    <span class="band"><span class="nm">${esc(p.nome)}</span><span class="tp">${esc(p.tipo)}</span></span></button>`;
+    <span class="band"><span class="nm">${esc(p.nome).replace(/(\S)-(\S)/g, "$1-\u2060$2")}</span><span class="tp">${esc(p.tipo)}</span></span></button>`;
 }
 function bindPrizes(root) {
   root.querySelectorAll("[data-prize]:not([disabled])").forEach(b => b.onclick = async () => {
