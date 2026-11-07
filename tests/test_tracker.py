@@ -9,10 +9,12 @@ import epic  # noqa: E402
 from tracker import Store, Tracker, extract_counters, looks_like_token  # noqa: E402
 
 KEY = "Quest:q_chests/completion_open"
+OTHER = "Quest:q_elims/completion_elims"
 
 
 def profile(chests, extra_items=()):
     items = {"q": {"templateId": "Quest:q_chests", "attributes": {"completion_open": chests, "creation_time": "x"}},
+             "e": {"templateId": "Quest:q_elims", "attributes": {"completion_elims": 7}},
              "a": {"templateId": "AthenaCharacter:cid_1", "quantity": 1}}
     for i, tid in enumerate(extra_items):
         items[f"x{i}"] = {"templateId": tid, "quantity": 1}
@@ -32,7 +34,7 @@ class TrackerTest(unittest.TestCase):
 
     def test_total_includes_value_at_selection_and_grows(self):
         self.t.update(profile(40))
-        self.t.set_selected(KEY, True)
+        self.t.set_counter(KEY)
         self.assertEqual(self.t.total(), 40)
         self.clock[0] += 600
         self.assertEqual(self.t.update(profile(43))["gained"], 3)
@@ -41,13 +43,13 @@ class TrackerTest(unittest.TestCase):
 
     def test_counter_reset_keeps_counting(self):
         self.t.update(profile(10))
-        self.t.set_selected(KEY, True)
+        self.t.set_counter(KEY)
         self.t.update(profile(2))  # quest semanal reiniciou e já tem 2 baús
         self.assertEqual(self.t.total(), 12)
 
     def test_drops_record_chest_number(self):
         self.t.update(profile(10))
-        self.t.set_selected(KEY, True)
+        self.t.set_counter(KEY)
         r = self.t.update(profile(12, ["AthenaLoadingScreen:ls_x", "Quest:new_weekly", "Token:PirateShopAccess_2026"]))
         self.assertEqual(r["new_items"], ["AthenaLoadingScreen:ls_x", "Token:PirateShopAccess_2026"])
         self.assertEqual(r["token"], ["Token:PirateShopAccess_2026"])
@@ -55,9 +57,33 @@ class TrackerTest(unittest.TestCase):
 
     def test_state_survives_restart(self):
         self.t.update(profile(10))
-        self.t.set_selected(KEY, True)
+        self.t.set_counter(KEY)
         t2 = Tracker(self.t.store)
         self.assertEqual(t2.total(), 10)
+
+    def test_auto_picks_chest_counter_unconfirmed(self):
+        self.t.update(profile(40))
+        c = self.t.state["counter"]
+        self.assertEqual(c["key"], KEY)
+        self.assertFalse(c["confirmed"])
+        self.assertEqual(self.t.total(), 40)
+
+    def test_find_by_game_number(self):
+        self.t.update(profile(40))
+        self.assertEqual([h["key"] for h in self.t.find_by_value(40)], [KEY])
+        self.assertEqual([h["key"] for h in self.t.find_by_value(7)], [OTHER])
+        self.assertEqual(self.t.find_by_value(10), [])  # stats/book_level nunca entra
+
+    def test_stats_cannot_be_counter(self):
+        self.t.update(profile(1))
+        with self.assertRaises(ValueError):
+            self.t.set_counter("stats/book_level")
+
+    def test_old_multi_counter_state_is_reset(self):
+        self.t.store.save("estado.json", {**self.t.state, "selected": {"stats/book_level": {"total": 2444, "last": 10}}})
+        t2 = Tracker(self.t.store)
+        self.assertEqual(t2.total(), 0)
+        self.assertNotIn("selected", t2.state)
 
     def test_token_detection(self):
         self.assertTrue(looks_like_token("Token:pirate_shop_access_2027"))

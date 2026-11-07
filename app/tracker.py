@@ -15,6 +15,10 @@ BRT = timezone(timedelta(hours=-3))  # Brasília não tem horário de verão des
 KEYWORDS = ("chest", "treasure", "pirate", "token", "shopaccess", "captain",
             "fragment", "map", "onepiece", "sprite", "buried", "bau")
 
+# Palavras que indicam um contador de baús dentro das missões do evento.
+CHEST_WORDS = ("chest", "treasure", "sprite", "bau", "loot")
+QUEST_PREFIXES = ("Quest:", "ChallengeBundle")
+
 COSMETIC_PREFIXES = ("Athena", "Cosmetic", "Sparks", "Vehicle", "Juno")
 NOT_DROPS = ("Quest:", "ChallengeBundle", "ChallengeBundleSchedule:")
 
@@ -96,7 +100,7 @@ class Tracker:
         self.store = store
         self.now = now
         self.state = store.load("estado.json", {
-            "selected": {},      # chave -> {"total": n, "last": valor bruto}
+            "counter": None,     # {"key", "total", "last", "confirmed", "game_value", "confirmed_at"}
             "last_counters": {},
             "last_items": None,
             "events": [],        # [{"ts", "baus"}] cada aumento no total
@@ -104,6 +108,10 @@ class Tracker:
             "manual_prizes": [], # nomes marcados à mão
             "first_seen": None,
         })
+        # Versões antigas somavam vários contadores, o que inflava o total. Recomeça.
+        if "selected" in self.state:
+            self.state.pop("selected")
+            self.state.setdefault("counter", None)
         self.session_start = self.now()
         self.session_gained = 0
         self.prev_counters = dict(self.state["last_counters"])
@@ -118,16 +126,15 @@ class Tracker:
             st["first_seen"] = ts
 
         gained = 0
-        for key, sel in st["selected"].items():
-            if key not in counters:
-                continue
-            new, old = counters[key], sel["last"]
-            # Se o valor caiu, o contador reiniciou (quest semanal): conta do zero.
+        c = st["counter"]
+        if c and c["key"] in counters:
+            new, old = counters[c["key"]], c["last"]
+            # Se o valor caiu, o contador reiniciou: conta do zero.
             delta = new - old if new >= old else new
             if delta > 0:
-                sel["total"] += delta
-                gained += delta
-            sel["last"] = new
+                c["total"] += delta
+                gained = delta
+            c["last"] = new
         self.session_gained += gained
         if gained:
             st["events"].append({"ts": ts, "baus": gained})
@@ -143,19 +150,57 @@ class Tracker:
         st["last_counters"] = counters
         st["last_items"] = items
         st["last_refresh"] = ts
+        if st["counter"] is None:
+            best = self.chest_candidates()
+            if best:
+                self._use(best[0]["key"], confirmed=False)
         self.store.save("estado.json", st)
         return {"gained": gained, "new_items": new_items,
                 "token": [t for t in new_items if looks_like_token(t)]}
 
     # ---------- escolha do contador ----------
-    def set_selected(self, key, on):
-        sel = self.state["selected"]
-        if on and key not in sel:
-            value = self.state["last_counters"].get(key, 0)
-            # O valor atual já entra no total: são baús abertos antes da ferramenta.
-            sel[key] = {"total": value, "last": value}
-        elif not on:
-            sel.pop(key, None)
+    def chest_candidates(self):
+        """Contadores de missão que parecem contar baús, do mais provável ao menos."""
+        rows = []
+        for key, value in self.state["last_counters"].items():
+            if not key.startswith(QUEST_PREFIXES):
+                continue
+            low = key.lower()
+            score = sum(w in low for w in CHEST_WORDS) + (2 if "chest" in low else 0)
+            if score:
+                rows.append({"key": key, "value": value, "score": score})
+        rows.sort(key=lambda r: (-r["score"], -r["value"]))
+        return rows
+
+    def find_by_value(self, n):
+        """Contadores de missão com exatamente o número que o jogo mostra."""
+        hits = [{"key": k, "value": v, "chest": any(w in k.lower() for w in CHEST_WORDS)}
+                for k, v in self.state["last_counters"].items()
+                if k.startswith(QUEST_PREFIXES) and v == n]
+        hits.sort(key=lambda r: not r["chest"])
+        return hits
+
+    def _use(self, key, confirmed):
+        value = self.state["last_counters"].get(key, 0)
+        # O contador do jogo já é o total do evento: o valor atual entra inteiro.
+        self.state["counter"] = {"key": key, "total": value, "last": value,
+                                 "confirmed": confirmed, "game_value": value if confirmed else None,
+                                 "confirmed_at": self.now() if confirmed else None}
+
+    def set_counter(self, key, confirmed=True):
+        if not key.startswith(QUEST_PREFIXES):
+            raise ValueError("Só contadores de missão podem contar baús.")
+        self._use(key, confirmed)
+        self.store.save("estado.json", self.state)
+
+    def confirm_counter(self):
+        c = self.state["counter"]
+        if c:
+            c.update(confirmed=True, game_value=c["last"], confirmed_at=self.now())
+            self.store.save("estado.json", self.state)
+
+    def reset_counter(self):
+        self.state["counter"] = None
         self.store.save("estado.json", self.state)
 
     def toggle_manual_prize(self, name):
@@ -169,7 +214,8 @@ class Tracker:
 
     # ---------- leitura ----------
     def total(self):
-        return sum(s["total"] for s in self.state["selected"].values())
+        c = self.state["counter"]
+        return c["total"] if c else 0
 
     def summary(self):
         ts = self.now()
@@ -178,13 +224,23 @@ class Tracker:
                           if datetime.fromtimestamp(e["ts"], BRT).date() == today)
         session = self.session_gained
         hours = (ts - self.session_start) / 3600
+        rate = round(session / hours, 1) if hours >= 1 / 6 else None
+        if rate is None:
+            # Sessão curta: usa o ritmo de hoje, do primeiro ao último baú contado.
+            today_ts = [e["ts"] for e in self.state["events"]
+                        if datetime.fromtimestamp(e["ts"], BRT).date() == today]
+            span = (max(today_ts) - min(today_ts)) / 3600 if today_ts else 0
+            if span >= 1 / 6:
+                rate = round(today_count / span, 1)
         return {
             "total": self.total(),
             "today": today_count,
             "session": session,
-            # Ritmo só depois de 10 minutos, senão o número sai absurdo.
-            "rate": round(session / hours, 1) if hours >= 1 / 6 else None,
-            "has_counter": bool(self.state["selected"]),
+            # Ritmo só com 10 minutos de dados, senão o número sai absurdo.
+            "rate": rate,
+            "has_counter": bool(self.state["counter"]),
+            "counter": self.state["counter"],
+            "has_data": bool(self.state["last_counters"]),
             "last_refresh": self.state.get("last_refresh"),
             "per_day": self.per_day(),
         }
@@ -205,7 +261,7 @@ class Tracker:
                 "key": key,
                 "value": value,
                 "delta": value - prev[key] if key in prev else None,
-                "selected": key in self.state["selected"],
+                "selected": key == (self.state["counter"] or {}).get("key"),
                 "hint": matches_keywords(key),
             })
         rows.sort(key=lambda r: (not r["selected"], not (r["delta"] or 0), not r["hint"], r["key"]))
@@ -217,7 +273,7 @@ class Tracker:
         return {
             "gerado_em": datetime.fromtimestamp(self.now(), BRT).isoformat(),
             "contadores_suspeitos": {k: v for k, v in counters.items() if matches_keywords(k)},
-            "contadores_escolhidos": list(self.state["selected"]),
+            "contador_escolhido": self.state["counter"],
             "itens_suspeitos": {k: v for k, v in items.items()
                                 if matches_keywords(k) and not k.startswith(COSMETIC_PREFIXES)},
             "drops": self.state["drops"][-50:],

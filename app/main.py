@@ -14,7 +14,7 @@ import epic  # noqa: E402
 from catalog import Catalog, same_name  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 REPO = "andreymira2/caca-ao-token"
 EVENT_URL = f"https://raw.githubusercontent.com/{REPO}/main/data/evento.json"
 
@@ -105,7 +105,7 @@ class Api:
             self._error = None
             result = self._tracker.update(profile)
             return {"ok": True, **result,
-                    "new_names": [self._catalog.name(t) or t for t in result["new_items"]]}
+                    "new_names": [(self._catalog.item(t) or {}).get("name") or t for t in result["new_items"]]}
 
     def dashboard(self):
         return self._tracker.summary()
@@ -113,23 +113,49 @@ class Api:
     def counters(self):
         return self._tracker.counters_view()
 
-    def set_counter(self, key, on):
-        self._tracker.set_selected(key, bool(on))
+    def chest_check(self):
+        """O que a tela precisa para conferir o contador de baús."""
+        return {"counter": self._tracker.state["counter"],
+                "candidates": self._tracker.chest_candidates()[:6]}
+
+    def find_counter(self, game_number):
+        """Procura o contador com o mesmo número que o jogo mostra."""
+        try:
+            n = int(str(game_number).replace(".", "").strip())
+        except ValueError:
+            return {"ok": False, "error": "Digite só o número, por exemplo 214."}
+        hits = self._tracker.find_by_value(n)
+        if len(hits) == 1 or (hits and hits[0]["chest"] and not any(h["chest"] for h in hits[1:])):
+            self._tracker.set_counter(hits[0]["key"], confirmed=True)
+            return {"ok": True, "matched": True, "summary": self._tracker.summary()}
+        return {"ok": True, "matched": False, "hits": hits}
+
+    def set_counter(self, key):
+        self._tracker.set_counter(key, confirmed=True)
+        return self._tracker.summary()
+
+    def confirm_counter(self):
+        self._tracker.confirm_counter()
+        return self._tracker.summary()
+
+    def reset_counter(self):
+        self._tracker.reset_counter()
         return self._tracker.summary()
 
     def get_event(self):
         if self._event is None:
+            with open(resource("data", "evento.json"), encoding="utf-8") as f:
+                bundled = json.load(f)
             try:
                 req = urllib.request.Request(EVENT_URL, headers={"User-Agent": "CacaAoToken"})
                 with urllib.request.urlopen(req, timeout=8) as r:
-                    self._event = json.loads(r.read().decode("utf-8"))
-                    self._store.save("evento_cache.json", self._event)
+                    online = json.loads(r.read().decode("utf-8"))
+                    self._store.save("evento_cache.json", online)
             except Exception:
-                cached = self._store.load("evento_cache.json", None)
-                if cached is None:
-                    with open(resource("data", "evento.json"), encoding="utf-8") as f:
-                        cached = json.load(f)
-                self._event = cached
+                online = self._store.load("evento_cache.json", None)
+            # Usa a lista online só se ela for igual ou mais nova que a que veio no app.
+            ok = online and online.get("versao", 0) >= bundled.get("versao", 0)
+            self._event = online if ok else bundled
         return self._event
 
     def prizes(self):
@@ -144,8 +170,9 @@ class Api:
                 upcoming = w
         drop_names = []
         for d in self._tracker.state["drops"]:
-            name = self._catalog.name(d["templateId"])
-            drop_names.append({**d, "name": name, "token": looks_like_token(d["templateId"])})
+            info = self._catalog.item(d["templateId"]) or {}
+            drop_names.append({**d, "name": info.get("name"), "image": info.get("image"),
+                               "rarity": info.get("rarity"), "token": looks_like_token(d["templateId"])})
         manual = self._tracker.state["manual_prizes"]
 
         def mark(p):
@@ -153,10 +180,14 @@ class Api:
                 if p.get("tipo") == "Token":
                     year = p["nome"][-4:]
                     return d["token"] and year in d["templateId"]
+                if p.get("id") and d["templateId"].split(":", 1)[-1].lower() == p["id"].lower():
+                    return True
                 return same_name(d["name"], p["nome"])
             hit = next((d for d in drop_names if matches(d)), None)
+            info = (self._catalog.prize(p) if p.get("tipo") != "Token" else None) or {}
             return {**p, "obtido": bool(hit) or p["nome"] in manual,
-                    "auto": bool(hit), "bau": hit["bau"] if hit else None}
+                    "auto": bool(hit), "bau": hit["bau"] if hit else None,
+                    "image": info.get("image"), "rarity": info.get("rarity") or p.get("raridade")}
 
         return {
             "semana": week and {**week, "premios": [mark(p) for p in week["premios"]]},
@@ -189,7 +220,7 @@ def main():
     import webview
     api = Api()
     webview.create_window("Caça ao Token", resource("ui", "index.html"), js_api=api,
-                          width=1180, height=800, min_size=(900, 620), background_color="#0E1116")
+                          width=1240, height=820, min_size=(980, 660), background_color="#0A1A4F")
     webview.start()
 
 

@@ -5,392 +5,682 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Caça ao Token</title>
 <style>
+  @font-face { font-family: "Anton"; src: url(fonts/Anton-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Barlow SC"; src: url(fonts/BarlowSemiCondensed-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+  @font-face { font-family: "Barlow SC"; src: url(fonts/BarlowSemiCondensed-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+  @font-face { font-family: "Barlow SC"; src: url(fonts/BarlowSemiCondensed-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+
   :root {
-    --bg: #0E1116; --panel: #161B22; --panel-2: #1C232D; --line: #2A3340;
-    --text: #E8ECF1; --muted: #8B96A5; --gold: #F2B544; --gold-dim: #F2B54422;
-    --teal: #3CC9B0; --red: #FF6B6B;
-    --radius: 12px;
+    --navy: #071447; --deep: #0B1E66; --royal: #1840C0; --sky: #2F6BFF;
+    --panel: rgba(4, 12, 52, .62); --panel-hi: rgba(255, 255, 255, .07);
+    --line: rgba(255, 255, 255, .14); --text: #FFFFFF; --soft: #C3D0FF; --dim: #8EA0E6;
+    --yellow: #FFE14D; --yellow-ink: #2A2100; --green: #63E06B; --red: #FF6A5C;
+    --r-common: linear-gradient(160deg, #A2A7B0, #5B6069);
+    --r-uncommon: linear-gradient(160deg, #7FD32C, #2B7A0B);
+    --r-rare: linear-gradient(160deg, #4FC8FF, #1660B2);
+    --r-epic: linear-gradient(160deg, #CE6BFF, #6418AE);
+    --r-legendary: linear-gradient(160deg, #FFB24A, #C14F14);
+    --r-mythic: linear-gradient(160deg, #FFE36A, #C2860E);
+    --r-icon: linear-gradient(160deg, #3BE0E6, #0D6E82);
+    --display: "Anton", "Arial Narrow", sans-serif;
+    --ui: "Barlow SC", "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
-    font: 14px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; }
-  button { font: inherit; cursor: pointer; }
-  .app { display: grid; grid-template-columns: 210px 1fr; height: 100%; }
-  nav { background: var(--panel); border-right: 1px solid var(--line); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
-  .brand { font-weight: 700; font-size: 16px; padding: 0 10px 18px; display: flex; align-items: center; gap: 8px; }
-  .brand svg { flex: none; }
-  nav button { background: none; border: 0; color: var(--muted); text-align: left; padding: 9px 12px; border-radius: 8px; }
-  nav button:hover { background: var(--panel-2); color: var(--text); }
-  nav button.on { background: var(--gold-dim); color: var(--gold); font-weight: 600; }
-  .navfoot { margin-top: auto; padding: 10px; font-size: 12px; color: var(--muted); }
-  main { overflow: auto; padding: 28px 32px 40px; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  h2 { font-size: 15px; margin: 0 0 12px; }
-  .sub { color: var(--muted); margin: 0 0 22px; }
-  .grid { display: grid; gap: 14px; }
-  .g4 { grid-template-columns: repeat(4, 1fr); }
-  .g2 { grid-template-columns: 1fr 1fr; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
-  .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
-  .big { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; }
-  .huge { font-size: 64px; font-weight: 800; color: var(--gold); line-height: 1; font-variant-numeric: tabular-nums; }
-  .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 14px; }
-  .muted { color: var(--muted); }
-  .btn { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 8px 14px; border-radius: 8px; }
-  .btn:hover { border-color: var(--muted); }
-  .btn.gold { background: var(--gold); color: #1a1300; border-color: var(--gold); font-weight: 600; }
+  html, body { margin: 0; height: 100%; color: var(--text); font: 500 15px/1.4 var(--ui); }
+  body {
+    background:
+      linear-gradient(115deg, transparent 18%, rgba(140,190,255,.10) 24%, transparent 32%),
+      linear-gradient(115deg, transparent 58%, rgba(140,190,255,.07) 63%, transparent 70%),
+      radial-gradient(ellipse 90% 70% at 28% -10%, var(--sky) 0%, var(--royal) 38%, var(--deep) 72%, var(--navy) 100%);
+    background-attachment: fixed;
+    overflow: hidden;
+  }
+  ::selection { background: var(--yellow); color: var(--yellow-ink); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.22); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  :focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  svg.i { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- barra superior ---------- */
+  .app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+  header { display: flex; align-items: center; gap: 28px; padding: 14px 28px; background: linear-gradient(180deg, rgba(3,9,40,.75), rgba(3,9,40,.35)); border-bottom: 1px solid var(--line); }
+  .mark { display: flex; align-items: center; gap: 10px; font: 400 22px/1 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+  .mark .badge { width: 36px; height: 36px; display: grid; place-items: center; background: var(--yellow); color: var(--yellow-ink); transform: skewX(-8deg); border-radius: 4px; }
+  .mark .badge svg { transform: skewX(8deg); width: 22px; height: 22px; }
+  nav { display: flex; gap: 6px; }
+  nav button { display: flex; align-items: center; gap: 8px; padding: 9px 18px; background: none; border: 0; color: var(--soft); font: 400 17px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; transform: skewX(-8deg); border-radius: 3px; }
+  nav button > * { transform: skewX(8deg); }
+  nav button:hover { color: #fff; background: var(--panel-hi); }
+  nav button.on { color: var(--yellow-ink); background: var(--yellow); }
+  .top-right { margin-left: auto; display: flex; align-items: center; gap: 14px; color: var(--soft); font-size: 14px; }
+  .who { display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- botões e chips ---------- */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 3px; background: rgba(255,255,255,.12); color: #fff; font: 400 16px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; transform: skewX(-8deg); transition: background .15s, transform .15s; }
+  .btn > * { transform: skewX(8deg); }
+  .btn:hover { background: rgba(255,255,255,.2); }
+  .btn.go { background: var(--yellow); color: var(--yellow-ink); }
+  .btn.go:hover { background: #FFEA7A; }
+  .btn.ghost { background: none; box-shadow: inset 0 0 0 2px rgba(255,255,255,.3); }
   .btn:disabled { opacity: .5; cursor: default; }
-  .banner { border-radius: var(--radius); padding: 14px 18px; margin-bottom: 14px; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
-  .banner.live { background: linear-gradient(90deg, #F2B54433, #F2B54411); border: 1px solid #F2B54466; }
-  .banner.warn { background: #3CC9B014; border: 1px solid #3CC9B055; }
-  .banner.err { background: #FF6B6B14; border: 1px solid #FF6B6B55; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { color: var(--muted); font-weight: 500; font-size: 12px; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  code, .mono { font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; word-break: break-all; }
-  .pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: 11px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
-  .pill.gold { color: var(--gold); border-color: #F2B54466; }
-  .pill.teal { color: var(--teal); border-color: #3CC9B066; }
-  .up { color: var(--teal); font-weight: 600; }
-  .check { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .check:last-child { border-bottom: 0; }
-  .box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--line); flex: none; display: grid; place-items: center; background: none; padding: 0; }
-  .box.on { background: var(--teal); border-color: var(--teal); color: #0E1116; font-weight: 800; }
-  .bar { height: 8px; background: var(--panel-2); border-radius: 99px; overflow: hidden; margin-top: 8px; }
-  .bar > i { display: block; height: 100%; background: var(--gold); border-radius: 99px; }
-  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  input[type=text], input[type=number], textarea { background: var(--bg); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 8px 10px; font: inherit; }
-  textarea { width: 100%; min-height: 80px; font-family: Consolas, monospace; font-size: 12px; }
-  ol.steps { padding-left: 20px; } ol.steps li { margin-bottom: 12px; }
-  .event { display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: center; }
-  .event.now { color: var(--gold); }
-  .event.past { opacity: .45; }
-  .bars { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-top: 18px; }
-  .bars .col { flex: 1; max-width: 48px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; font-size: 11px; }
-  .bars .col i { display: block; width: 100%; background: var(--gold); border-radius: 4px 4px 0 0; min-height: 2px; }
-  .bars .col span { color: var(--muted); }
-  .big.fit { font-size: 26px; white-space: nowrap; }
-  .modal { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; z-index: 10; }
-  .modal .card { max-width: 460px; text-align: center; padding: 32px; border-color: var(--gold); }
-  .hidden { display: none !important; }
-  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--panel-2); border: 1px solid var(--line); padding: 10px 16px; border-radius: 10px; }
-  @media (max-width: 1000px) { .g4 { grid-template-columns: 1fr 1fr; } }
+  .btn.spin svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 3px; font: 700 13px/1 var(--ui); text-transform: uppercase; letter-spacing: .04em; background: rgba(255,255,255,.12); color: #fff; white-space: nowrap; }
+  .chip svg.i { width: 15px; height: 15px; }
+  .chip.ok { background: rgba(99,224,107,.18); color: var(--green); }
+  .chip.warn { background: var(--yellow); color: var(--yellow-ink); }
+  .chip.live { background: var(--yellow); color: var(--yellow-ink); }
+
+  /* ---------- área principal ---------- */
+  main { overflow: auto; padding: 22px 28px 32px; }
+  .view { display: none; } .view.on { display: block; }
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,20,.25); }
+  .slant, .ph, .chest-num, .clock, .day h3, .ev .tm, .item .nm, .stat .v, .odds-main .v, .up-next .big { font-style: oblique 9deg; font-synthesis: style; }
+  .ph { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; font: 400 18px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--soft); }
+  .ph svg.i { color: var(--yellow); }
+  .ph .chip { margin-left: auto; }
+  .ph .chip svg.i { color: inherit; }
+  .c7 { grid-column: span 7; } .c5 { grid-column: span 5; } .c8 { grid-column: span 8; } .c4 { grid-column: span 4; } .c12 { grid-column: span 12; } .c6 { grid-column: span 6; }
+  .muted { color: var(--soft); }
+  .small { font-size: 13px; color: var(--dim); }
+
+  /* baús */
+  .chest-num { font: 400 128px/.9 var(--display); letter-spacing: -.01em; margin: 4px 0 10px; text-shadow: 0 4px 0 rgba(0,0,40,.35); }
+  .chest-num.unsure { color: #E7ECFF; }
+  .stats { display: flex; gap: 28px; margin-top: 6px; }
+  .stat .v { font: 400 34px/1 var(--display); }
+  .stat .l { display: flex; align-items: center; gap: 6px; color: var(--soft); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; margin-top: 4px; }
+  .stat .l svg.i { width: 15px; height: 15px; }
+  .days { display: flex; align-items: flex-end; gap: 6px; height: 64px; margin-left: auto; }
+  .days div { width: 18px; background: rgba(255,255,255,.28); border-radius: 2px 2px 0 0; min-height: 3px; }
+  .days div.today { background: var(--yellow); }
+  .check { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .check p { margin: 0 0 10px; }
+  .check .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .where { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #fff; }
+  .where svg.i { width: 17px; height: 17px; }
+  input.game { width: 140px; padding: 10px 12px; border-radius: 3px; border: 2px solid rgba(255,255,255,.25); background: rgba(0,0,30,.45); color: #fff; font: 400 22px/1 var(--display); letter-spacing: .02em; }
+  input.game:focus { border-color: var(--yellow); outline: none; }
+  .pick { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: rgba(0,0,30,.35); text-align: left; }
+  .pick:hover { border-color: var(--yellow); }
+  .pick code { font: 500 12px/1.3 Consolas, monospace; color: var(--soft); word-break: break-all; }
+
+  /* treasure hour */
+  .th { display: flex; flex-direction: column; height: 100%; }
+  .th.live { background: linear-gradient(160deg, #FFE96E, #FFC21F); color: var(--yellow-ink); border-color: transparent; }
+  .th.live .ph, .th.live .ph svg.i, .th.live .muted { color: var(--yellow-ink); }
+  .clock { font: 400 76px/1 var(--display); letter-spacing: .01em; margin: 6px 0 4px; }
+  .when { font: 700 17px/1.2 var(--ui); text-transform: uppercase; letter-spacing: .03em; }
+  .bar { height: 8px; border-radius: 8px; background: rgba(0,0,0,.18); overflow: hidden; margin-top: 12px; }
+  .bar i { display: block; height: 100%; background: var(--yellow-ink); }
+  .next { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+  .th.live .next { border-color: rgba(0,0,0,.15); }
+  .nx { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .nx .ico { width: 30px; height: 30px; border-radius: 4px; display: grid; place-items: center; background: rgba(255,255,255,.12); }
+  .th.live .nx .ico { background: rgba(0,0,0,.12); }
+  .nx .ico svg.i { width: 17px; height: 17px; }
+  .nx .t { margin-left: auto; font: 400 16px/1 var(--display); letter-spacing: .03em; }
+
+  /* loja de prêmios */
+  .shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .shop.row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  .item { position: relative; aspect-ratio: 3 / 4; border-radius: 5px; overflow: hidden; border: 0; padding: 0; text-align: left; background: var(--r-rare); box-shadow: inset 0 0 0 2px rgba(255,255,255,.25); transition: transform .15s; }
+  .item:hover { transform: translateY(-2px); }
+  .item[disabled] { cursor: default; }
+  .item[disabled]:hover { transform: none; }
+  .item.common { background: var(--r-common); } .item.uncommon { background: var(--r-uncommon); } .item.rare { background: var(--r-rare); }
+  .item.epic { background: var(--r-epic); } .item.legendary { background: var(--r-legendary); } .item.mythic { background: var(--r-mythic); } .item.icon { background: var(--r-icon); }
+  .item::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 35%, rgba(255,255,255,.35), transparent 60%); }
+  .item img { position: absolute; inset: 0 0 26% 0; width: 100%; height: 74%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0,0,0,.35)); }
+  .item .ph-art { position: absolute; inset: 0 0 26% 0; display: grid; place-items: center; color: rgba(255,255,255,.75); }
+  .item .ph-art svg.i { width: 54px; height: 54px; stroke-width: 1.6; }
+  .item .band { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px 9px; background: linear-gradient(0deg, rgba(0,0,20,.85), rgba(0,0,20,.55)); }
+  .item .nm { font: 400 15px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; color: #fff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item .tp { font: 700 11px/1.2 var(--ui); text-transform: uppercase; letter-spacing: .06em; color: rgba(255,255,255,.7); margin-top: 3px; }
+  .item .own { position: absolute; top: 8px; right: 8px; display: none; align-items: center; gap: 4px; padding: 4px 7px; border-radius: 3px; background: var(--yellow); color: var(--yellow-ink); font: 700 11px/1 var(--ui); text-transform: uppercase; letter-spacing: .05em; }
+  .item .own svg.i { width: 13px; height: 13px; stroke-width: 3; }
+  .item.got .own { display: flex; }
+  .item.got img, .item.got .ph-art { opacity: .55; }
+  .item .chestno { position: absolute; top: 8px; left: 8px; font: 700 11px/1 var(--ui); background: rgba(0,0,20,.6); padding: 4px 6px; border-radius: 3px; }
+
+  /* sorte */
+  .odds-main { display: flex; align-items: baseline; gap: 10px; }
+  .odds-main .v { font: 400 64px/1 var(--display); }
+  .odds-row { display: grid; grid-template-columns: 92px 1fr 54px; gap: 10px; align-items: center; margin-top: 10px; font-weight: 600; }
+  .odds-row .track { height: 10px; border-radius: 10px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .odds-row .track i { display: block; height: 100%; background: var(--yellow); border-radius: 10px; }
+  .odds-row .pct { text-align: right; font: 400 17px/1 var(--display); }
+  .token { width: 46px; height: 46px; border-radius: 50%; background: var(--r-mythic); display: grid; place-items: center; color: var(--yellow-ink); box-shadow: 0 0 0 3px rgba(255,225,77,.3); flex: none; }
+  .token svg.i { width: 24px; height: 24px; }
+
+  /* agenda */
+  .up-next { display: flex; align-items: center; gap: 18px; }
+  .up-next .big { font: 400 54px/1 var(--display); }
+  .daysrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .day { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; }
+  .day.past { opacity: .45; }
+  .day h3 { margin: 0 0 12px; display: flex; align-items: baseline; gap: 8px; font: 400 26px/1 var(--display); text-transform: uppercase; }
+  .day h3 .chip { font-size: 11px; }
+  .ev { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 4px; background: rgba(255,255,255,.07); margin-top: 8px; }
+  .ev .ico { width: 40px; height: 40px; border-radius: 4px; display: grid; place-items: center; flex: none; }
+  .ev .ico svg.i { width: 22px; height: 22px; }
+  .ev.treasure .ico { background: var(--yellow); color: var(--yellow-ink); }
+  .ev.captain .ico { background: #3BE0E6; color: #04323A; }
+  .ev.reset .ico { background: rgba(255,255,255,.18); color: #fff; }
+  .ev.final .ico { background: var(--r-legendary); color: #fff; }
+  .ev .tm { font: 400 21px/1 var(--display); letter-spacing: .02em; }
+  .ev .lb { font-weight: 600; font-size: 14px; color: var(--soft); margin-top: 2px; white-space: nowrap; }
+  .ev.now { background: var(--yellow); color: var(--yellow-ink); }
+  .ev.now .lb { color: var(--yellow-ink); }
+  .ev.now .ico { background: var(--yellow-ink); color: var(--yellow); }
+  .ev.done { opacity: .45; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 16px; color: var(--soft); font-weight: 600; font-size: 14px; }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: block; }
+
+  /* conta */
+  .steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
+  .steps li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; display: grid; place-items: center; background: var(--yellow); color: var(--yellow-ink); font: 400 24px/1 var(--display); border-radius: 4px; transform: skewX(-8deg); }
+  textarea { width: 100%; min-height: 84px; margin-top: 8px; padding: 10px; border-radius: 4px; border: 2px solid rgba(255,255,255,.25); background: rgba(0,0,30,.45); color: #fff; font: 13px/1.4 Consolas, monospace; }
+  textarea:focus { outline: none; border-color: var(--yellow); }
+  details { margin-top: 16px; }
+  summary { cursor: pointer; font: 400 17px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--soft); }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; font-size: 14px; }
+  th { color: var(--dim); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: .05em; }
+  td code { font: 12px/1.3 Consolas, monospace; color: var(--soft); word-break: break-all; }
+  td.r, th.r { text-align: right; }
+
+  /* avisos */
+  .banner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 6px; margin-bottom: 16px; background: rgba(255,106,92,.16); border: 1px solid rgba(255,106,92,.5); }
+  .banner.info { background: rgba(255,225,77,.12); border-color: rgba(255,225,77,.5); }
+  .banner .btn { margin-left: auto; }
+  .empty { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 8px 0; }
+  .empty .big { font: 400 32px/1.05 var(--display); text-transform: uppercase; }
+  .toast { position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 5px; background: #0A1A55; border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,.4); opacity: 0; transform: translateY(10px); transition: opacity .2s, transform .2s; pointer-events: none; }
+  .toast.on { opacity: 1; transform: none; }
+  .overlay { position: fixed; inset: 0; display: none; place-items: center; background: rgba(2,6,30,.8); z-index: 10; }
+  .overlay.on { display: grid; }
+  .overlay .card { width: min(460px, 90vw); padding: 34px; text-align: center; border-radius: 8px; background: var(--r-mythic); color: var(--yellow-ink); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .overlay .card h2 { font: 400 44px/1 var(--display); text-transform: uppercase; margin: 14px 0 10px; }
+  .overlay .token { width: 84px; height: 84px; margin: 0 auto; background: var(--yellow-ink); color: var(--yellow); }
+  .overlay .token svg.i { width: 44px; height: 44px; }
+
+  @media (max-width: 900px) {
+    .c7, .c5, .c8, .c4, .c6 { grid-column: span 12; }
+    header { flex-wrap: wrap; gap: 14px; }
+  }
+  @media (max-width: 1100px) { header { gap: 16px; padding: 12px 20px; } nav button { padding: 9px 12px; } .who { display: none; } }
+  /* Janela baixa: tudo do painel cabe sem rolar. */
+  @media (max-height: 760px) {
+    main { padding: 14px 20px 18px; }
+    .grid { gap: 12px; }
+    .panel { padding: 14px 16px; }
+    .ph { margin-bottom: 10px; font-size: 16px; }
+    .chest-num { font-size: 84px; margin: 0 0 6px; }
+    .stat .v { font-size: 26px; }
+    .days { height: 44px; }
+    .check { margin-top: 10px; padding-top: 10px; }
+    .clock { font-size: 52px; }
+    .next { margin-top: 10px; padding-top: 10px; gap: 6px; }
+    .shop.row .item { aspect-ratio: auto; height: 150px; }
+    .shop.row .item .chestno { display: none; }
+    .shop.row .item img, .shop.row .item .ph-art { inset: 0 0 34% 0; height: 66%; }
+    .odds-main .v { font-size: 44px; }
+    .odds-row { margin-top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-chest" viewBox="0 0 24 24"><path d="M3 10h18v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 10V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2"/><path d="M10 10v3h4v-3"/></symbol>
+    <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6 2h12M6 22h12"/><path d="M7 2c0 5 10 5 10 10S7 17 7 22"/><path d="M17 2c0 5-10 5-10 10s10 5 10 10"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13"/><path d="M12 8S10.5 3 8 3.5 7 8 12 8zm0 0s1.5-5 4-4.5S17 8 12 8z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 21v-5h-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></symbol>
+    <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M8 11h8"/><path d="M4 13a8 8 0 0 0 16 0"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2"/><circle cx="16" cy="16" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="16" cy="8" r="1.2"/><circle cx="8" cy="16" r="1.2"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+    <symbol id="i-skull" viewBox="0 0 24 24"><path d="M5 11a7 7 0 0 1 14 0c0 2.5-1 4-2 5v3H7v-3c-1-1-2-2.5-2-5z"/><circle cx="9.5" cy="11" r="1.5"/><circle cx="14.5" cy="11" r="1.5"/><path d="M10 19v2M14 19v2"/></symbol>
+    <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3l-5 3 2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0z"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1z"/><path d="M9 13h6v4H9z"/><path d="M9 5V3h6v2"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 15l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 9l2 6v3h-2M5 18H3v-3h18"/><circle cx="7.5" cy="18" r="2"/><circle cx="16.5" cy="18" r="2"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/></symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8"/><path d="M6 4a2 2 0 0 0-2 2v2h4V6a2 2 0 0 0-2-2zM8 8v10a2 2 0 0 1-4 0"/><path d="M11 9h5M11 13h5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  </defs>
+</svg>
+
 <div class="app">
-  <nav>
-    <div class="brand">
-      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="11" rx="2" fill="#F2B544"/><path d="M3 11c0-4 4-7 9-7s9 3 9 7" fill="none" stroke="#F2B544" stroke-width="2"/><rect x="10" y="11" width="4" height="5" rx="1" fill="#0E1116"/></svg>
-      Caça ao Token
+  <header>
+    <div class="mark"><span class="badge"><svg class="i"><use href="#i-chest"/></svg></span>Caça ao Token</div>
+    <nav>
+      <button data-tab="painel" class="on"><svg class="i"><use href="#i-chest"/></svg><span>Painel</span></button>
+      <button data-tab="premios"><svg class="i"><use href="#i-gift"/></svg><span>Prêmios</span></button>
+      <button data-tab="agenda"><svg class="i"><use href="#i-calendar"/></svg><span>Agenda</span></button>
+      <button data-tab="conta"><svg class="i"><use href="#i-user"/></svg><span>Conta</span></button>
+    </nav>
+    <div class="top-right">
+      <span class="who" id="who"></span>
+      <span id="updated" class="num"></span>
+      <button class="btn go" id="refreshBtn" title="Ler a conta Epic de novo"><svg class="i"><use href="#i-refresh"/></svg><span>Atualizar</span></button>
     </div>
-    <button data-tab="painel" class="on">Painel</button>
-    <button data-tab="premios">Prêmios da semana</button>
-    <button data-tab="agenda">Agenda</button>
-    <button data-tab="sorte">Calculadora de sorte</button>
-    <button data-tab="dados">Contadores</button>
-    <button data-tab="conta">Conta Epic</button>
-    <div class="navfoot" id="navfoot"></div>
-  </nav>
+  </header>
+
   <main>
-    <!-- PAINEL -->
-    <section id="painel">
-      <div id="liveBanner"></div>
-      <div class="hero">
-        <div>
-          <div class="label">Baús abertos</div>
-          <div class="huge" id="total">0</div>
-        </div>
-        <div class="row">
-          <span class="muted" id="lastRefresh"></span>
-          <button class="btn gold" id="refreshBtn">Atualizar agora</button>
-        </div>
-      </div>
-      <div class="grid g4">
-        <div class="card"><div class="label">Hoje</div><div class="big" id="today">0</div></div>
-        <div class="card"><div class="label">Nesta sessão</div><div class="big" id="session">0</div></div>
-        <div class="card"><div class="label">Ritmo</div><div class="big" id="rate">0</div><div class="muted">baús por hora</div></div>
-        <div class="card"><div class="label">Reset semanal</div><div class="big fit" id="resetIn">–</div><div class="muted" id="seasonIn"></div></div>
-      </div>
-      <div class="card chart" style="margin-top:14px">
-        <h2>Baús por dia</h2>
-        <div id="chart"></div>
+    <!-- ===== PAINEL ===== -->
+    <section class="view on" id="v-painel">
+      <div id="banner"></div>
+      <div class="grid">
+        <div class="panel c7" id="chestPanel"></div>
+        <div class="panel c5 th" id="thPanel"></div>
+        <div class="panel c8" id="shopPanel"></div>
+        <div class="panel c4" id="oddsPanel"></div>
       </div>
     </section>
 
-    <!-- PRÊMIOS -->
-    <section id="premios" class="hidden">
-      <h1>Prêmios da semana</h1>
-      <p class="sub" id="weekSub"></p>
-      <div class="grid g2">
-        <div class="card"><h2 id="weekTitle">Pool da semana</h2><div id="weekList"></div></div>
-        <div class="card"><h2>O ano todo</h2><div id="fixedList"></div>
-          <p class="muted" style="margin-top:12px">Os itens são marcados sozinhos quando caem na conta. Carros e Jam Tracks às vezes não são reconhecidos: marque esses à mão.</p></div>
+    <!-- ===== PRÊMIOS ===== -->
+    <section class="view" id="v-premios">
+      <div class="grid">
+        <div class="panel c12" id="shopFull"></div>
+        <div class="panel c12" id="history"></div>
       </div>
-      <div class="card" style="margin-top:14px"><h2>Tudo o que já caiu</h2><div id="history"></div></div>
     </section>
 
-    <!-- AGENDA -->
-    <section id="agenda" class="hidden">
-      <h1>Agenda</h1>
-      <p class="sub">Horário de Brasília. A Epic não confirmou que as Treasure Hours aumentam a chance do token.</p>
-      <div class="card" id="agendaList"></div>
-    </section>
-
-    <!-- SORTE -->
-    <section id="sorte" class="hidden">
-      <h1>Calculadora de sorte</h1>
-      <p class="sub">Chance de você já ter tirado o token com os baús que abriu. <b>A chance real não foi divulgada:</b> estes são só cenários.</p>
-      <div class="card" style="margin-bottom:14px">
-        <div class="row"><span>Baús considerados:</span><input type="number" id="luckChests" min="0" style="width:110px"><button class="btn" id="luckReset">Usar meu total</button></div>
+    <!-- ===== AGENDA ===== -->
+    <section class="view" id="v-agenda">
+      <div class="panel" id="upNext" style="margin-bottom:16px"></div>
+      <div class="daysrow" id="daysRow"></div>
+      <div class="legend">
+        <span><i style="background:var(--yellow)"></i>Treasure Hour</span>
+        <span><i style="background:#3BE0E6"></i>Captain's Day</span>
+        <span><i style="background:rgba(255,255,255,.3)"></i>Troca dos prêmios</span>
+        <span><i style="background:#F5A13C"></i>Encerramento</span>
+        <span>Horário de Brasília · * horário aproximado</span>
       </div>
-      <div class="grid" id="luckList"></div>
     </section>
 
-    <!-- CONTADORES -->
-    <section id="dados" class="hidden">
-      <h1>Contadores</h1>
-      <p class="sub">Ainda não sabemos o nome do contador de baús. Para descobrir: abra 1 ou 2 baús no jogo, clique em <b>Atualizar</b> e veja qual linha subiu (ela aparece verde no topo). Marque essa linha. Se tiver mais de um tipo de baú, marque um contador por tipo.</p>
-      <div class="row" style="margin-bottom:14px">
-        <button class="btn gold" id="refreshBtn2">Atualizar</button>
-        <input type="text" id="filter" placeholder="Filtrar (ex.: chest)" style="width:220px">
-        <label class="row"><input type="checkbox" id="onlyHints"> Só os que parecem do evento</label>
-        <span style="flex:1"></span>
-        <button class="btn" id="exportBtn">Gerar diagnóstico</button>
-      </div>
-      <div class="card"><table><thead><tr><th style="width:36px"></th><th>Contador</th><th class="num">Valor</th><th class="num">Mudou</th></tr></thead><tbody id="counterRows"></tbody></table></div>
-    </section>
-
-    <!-- CONTA -->
-    <section id="conta" class="hidden">
-      <h1>Conta Epic</h1>
-      <div id="accountBox"></div>
+    <!-- ===== CONTA ===== -->
+    <section class="view" id="v-conta">
+      <div class="grid"><div class="panel c8" id="accountPanel"></div></div>
     </section>
   </main>
 </div>
 
-<div class="modal hidden" id="tokenModal">
+<div class="overlay" id="tokenOverlay" role="dialog" aria-modal="true" aria-labelledby="tokTitle">
   <div class="card">
-    <div style="font-size:48px">🏴‍☠️</div>
-    <h1 style="color:var(--gold)">Você tirou o token!</h1>
-    <p id="tokenText"></p>
-    <p class="muted">Ativar o token inicia os 14 dias de loja grátis na hora. O token de 2026 precisa ser usado até <b id="tokenDeadline"></b>.</p>
-    <button class="btn gold" onclick="hide('tokenModal')">Fechar</button>
+    <div class="token"><svg class="i"><use href="#i-skull"/></svg></div>
+    <h2 id="tokTitle">Você tirou o token!</h2>
+    <p id="tokText" style="font-weight:700"></p>
+    <p>Ativar inicia os 14 dias de loja grátis na hora. O token de 2026 vale até <b id="tokDeadline"></b>.</p>
+    <button class="btn" style="background:var(--yellow-ink);color:var(--yellow)" id="tokClose"><span>Fechar</span></button>
   </div>
 </div>
-<div class="toast hidden" id="toast"></div>
+<div class="toast" id="toast"><svg class="i"><use href="#i-check"/></svg><span id="toastText"></span></div>
 
 <script>
 const TZ = "America/Sao_Paulo";
 const $ = id => document.getElementById(id);
+const ico = (name, cls = "i") => `<svg class="${cls}"><use href="#i-${name}"/></svg>`;
 const fmtN = n => (n ?? 0).toLocaleString("pt-BR");
 const ts = iso => new Date(iso).getTime();
-let api, state = { summary: null, event: null, status: null };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const dtf = o => new Intl.DateTimeFormat("pt-BR", { timeZone: TZ, ...o });
+const hhmm = ms => dtf({ hour: "2-digit", minute: "2-digit" }).format(ms);
+const dayKey = ms => dtf({ year: "numeric", month: "2-digit", day: "2-digit" }).format(ms);
+const weekday = ms => dtf({ weekday: "short" }).format(ms).replace(".", "");
+const ddmm = ms => dtf({ day: "2-digit", month: "2-digit" }).format(ms);
 
-function hide(id) { $(id).classList.add("hidden"); }
-function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.remove("hidden"); clearTimeout(t._h); t._h = setTimeout(() => hide("toast"), 4000); }
-function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+let api, S = { status: null, event: null, summary: null, prizes: null, check: null, checkMode: null, hits: [] };
 
-function fmtDate(ms, opts = {}) {
-  return new Intl.DateTimeFormat("pt-BR", { timeZone: TZ, weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", ...opts }).format(ms);
-}
-function fmtLeft(ms) {
+function toast(msg) { $("toastText").textContent = msg; $("toast").classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => $("toast").classList.remove("on"), 3500); }
+
+function left(ms, secs = false) {
   if (ms <= 0) return "agora";
-  const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
+  const s = Math.floor(ms / 1000), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
   if (d) return `${d}d ${h}h`;
-  if (h) return `${h}h ${mm}min`;
-  return `${mm}min`;
+  if (secs) return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(ss).padStart(2, "0")}`;
+  return h ? `${h}h ${m}min` : `${m}min`;
+}
+function relDay(ms) {
+  const k = dayKey(ms), now = Date.now();
+  if (k === dayKey(now)) return "Hoje";
+  if (k === dayKey(now + 864e5)) return "Amanhã";
+  return null;
 }
 
 // ---------- abas ----------
-document.querySelectorAll("nav button[data-tab]").forEach(b => b.onclick = () => showTab(b.dataset.tab));
-function showTab(name) {
-  document.querySelectorAll("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
-  document.querySelectorAll("main > section").forEach(s => s.classList.toggle("hidden", s.id !== name));
-  ({ premios: renderPrizes, dados: renderCounters, conta: renderAccount, sorte: renderLuck, agenda: renderAgenda })[name]?.();
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => tab(b.dataset.tab));
+function tab(name) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-" + name));
+  if (name === "premios") renderPrizesFull();
+  if (name === "agenda") renderAgenda();
+  if (name === "conta") renderAccount();
+}
+
+// ---------- eventos ----------
+function events() {
+  const ev = S.event; if (!ev) return [];
+  const list = ev.agenda.map(e => ({ ...e, s: ts(e.inicio), f: ts(e.fim) }));
+  ev.semanas.slice(1).forEach(w => list.push({ tipo: "reset", titulo: `Semana ${w.numero} começa`, s: ts(w.inicio), f: ts(w.inicio) }));
+  return list.sort((a, b) => a.s - b.s);
+}
+const EV = {
+  treasure: { icon: "hourglass", name: "Treasure Hour" },
+  captain: { icon: "anchor", name: "Captain's Day" },
+  reset: { icon: "refresh", name: "Troca dos prêmios" },
+  final: { icon: "flag", name: "Encerramento" },
+};
+function currentWeek() { const n = Date.now(); return (S.event?.semanas || []).find(w => ts(w.inicio) <= n && n < ts(w.fim)); }
+
+// ---------- painel: baús ----------
+function renderChest() {
+  const s = S.summary, st = S.status, el = $("chestPanel");
+  const head = `<h2 class="ph">${ico("chest")}Baús abertos no evento<span id="chestChip"></span></h2>`;
+  if (!st?.logged_in) {
+    el.innerHTML = head + `<div class="empty"><div class="big">Conecte sua conta Epic<br>para contar os baús</div>
+      <button class="btn go" onclick="tab('conta')">${ico("user")}<span>Conectar</span></button></div>`;
+    return;
+  }
+  if (!s?.has_data) { el.innerHTML = head + `<div class="empty"><div class="big">Lendo sua conta…</div><span class="muted">Leva alguns segundos.</span></div>`; return; }
+  const c = s.counter;
+  const today = s.per_day.find(d => d.day === new Date().toLocaleDateString("sv-SE", { timeZone: TZ }));
+  const last = s.per_day.slice(-10), max = Math.max(1, ...last.map(d => d.baus));
+  const todayKey = new Date().toLocaleDateString("sv-SE", { timeZone: TZ });
+  const bars = last.map(d => `<div class="${d.day === todayKey ? "today" : ""}" style="height:${Math.max(3, 64 * d.baus / max)}px" title="${d.day.slice(8)}/${d.day.slice(5, 7)}: ${d.baus} baús"></div>`).join("");
+  let chip = "", body = "";
+  if (!c) {
+    chip = `<span class="chip warn">${ico("alert")}Contador não encontrado</span>`;
+    body = `<div class="chest-num unsure">–</div>`;
+  } else {
+    chip = c.confirmed
+      ? `<span class="chip ok" title="Conferido com o número do jogo">${ico("check")}Confere com o jogo</span>`
+      : `<span class="chip warn">${ico("alert")}Falta conferir</span>`;
+    body = `<div class="chest-num num ${c.confirmed ? "" : "unsure"}" id="chestNum">${fmtN(s.total)}</div>`;
+  }
+  body += `<div class="stats">
+      <div class="stat"><div class="v num">${fmtN(s.today)}</div><div class="l">${ico("sun")}Hoje</div></div>
+      <div class="stat"><div class="v num">${s.rate == null ? "…" : String(s.rate).replace(".", ",")}</div><div class="l">${ico("bolt")}${s.rate == null ? "Por hora · após 10 min" : "Por hora"}</div></div>
+      ${last.length > 1 ? `<div class="days" title="Baús por dia">${bars}</div>` : ""}
+    </div>`;
+  el.innerHTML = head.replace('<span id="chestChip"></span>', chip) + body + checkBlock(c);
+  bindCheck();
+}
+
+function checkBlock(c) {
+  const where = `<span class="where">${ico("scroll")}Missões${ico("chevron")}Caça ao Tesouro</span>`;
+  if (S.checkMode === "hits") {
+    return `<div class="check"><p>Mais de um contador tem esse número. Qual deles fala de baús?</p>
+      ${S.hits.map(h => `<button class="pick" data-key="${esc(h.key)}">${ico(h.chest ? "chest" : "dice")}<code>${esc(h.key)}</code></button>`).join("")}
+      <div class="row" style="margin-top:10px"><button class="btn ghost" data-act="cancel"><span>Voltar</span></button></div></div>`;
+  }
+  if (c?.confirmed && S.checkMode !== "open") {
+    return `<div class="check"><div class="row"><span class="small">Conferido em ${ddmm(c.confirmed_at * 1000)} com ${fmtN(c.game_value)} baús no jogo.</span>
+      <button class="btn ghost" data-act="open" style="margin-left:auto"><span>Conferir de novo</span></button></div></div>`;
+  }
+  const quick = c && S.checkMode !== "open"
+    ? `<p>No jogo, em ${where}, aparece <b>${fmtN(S.summary.total)}</b> baús?</p>
+       <div class="row"><button class="btn go" data-act="yes">${ico("check")}<span>Sim, é igual</span></button>
+       <button class="btn ghost" data-act="open"><span>Não, é outro número</span></button></div>`
+    : `<p>Abra ${where} no jogo e digite quantos baús aparecem lá.</p>
+       <div class="row"><input class="game num" id="gameNum" inputmode="numeric" placeholder="ex.: 214" aria-label="Número de baús no jogo">
+       <button class="btn go" data-act="find">${ico("check")}<span>Conferir</span></button>
+       ${c ? `<button class="btn ghost" data-act="cancel"><span>Voltar</span></button>` : ""}</div>
+       <p class="small" id="checkMsg" style="margin-top:8px">${c ? "" : "Se o número for 0, abra um baú, clique em Atualizar e tente de novo."}</p>`;
+  return `<div class="check">${quick}</div>`;
+}
+function bindCheck() {
+  document.querySelectorAll("#chestPanel [data-act]").forEach(b => b.onclick = async () => {
+    const a = b.dataset.act;
+    if (a === "yes") { S.summary = await api.confirm_counter(); S.checkMode = null; toast("Contagem conferida com o jogo"); }
+    if (a === "open") S.checkMode = "open";
+    if (a === "cancel") S.checkMode = null;
+    if (a === "find") {
+      const r = await api.find_counter($("gameNum").value);
+      if (!r.ok) { $("checkMsg").textContent = r.error; return; }
+      if (r.matched) { S.summary = r.summary; S.checkMode = null; toast("Achei! A contagem agora bate com o jogo"); }
+      else if (r.hits.length) { S.hits = r.hits; S.checkMode = "hits"; }
+      else { $("checkMsg").textContent = "Nenhum contador da conta tem esse número. Clique em Atualizar e tente de novo; se continuar, o jogo pode mostrar um número arredondado."; return; }
+    }
+    renderChest();
+    if (a === "open") $("gameNum")?.focus();
+  });
+  document.querySelectorAll("#chestPanel [data-key]").forEach(b => b.onclick = async () => {
+    S.summary = await api.set_counter(b.dataset.key); S.checkMode = null; toast("Contador escolhido e conferido"); renderChest(); renderOdds();
+  });
+  const g = $("gameNum"); if (g) g.onkeydown = e => { if (e.key === "Enter") document.querySelector('#chestPanel [data-act="find"]').click(); };
+}
+
+// ---------- painel: treasure hour ----------
+function renderTH() {
+  const now = Date.now(), all = events(), el = $("thPanel");
+  const th = all.filter(e => e.tipo === "treasure");
+  const live = th.find(e => e.s <= now && now < e.f), next = th.find(e => e.s > now);
+  el.classList.toggle("live", !!live);
+  const others = all.filter(e => e.tipo !== "treasure" && e.f > now).slice(0, 2);
+  const row = e => `<div class="nx"><span class="ico">${ico(EV[e.tipo].icon)}</span>${esc(EV[e.tipo].name)}<span class="t">${e.s <= now ? "agora" : (relDay(e.s) || weekday(e.s) + " " + ddmm(e.s)) + (e.tipo === "captain" ? "" : " " + hhmm(e.s))}</span></div>`;
+  let main;
+  if (live) {
+    const p = (now - live.s) / (live.f - live.s);
+    main = `<h2 class="ph">${ico("hourglass")}Treasure Hour<span class="chip live" style="background:var(--yellow-ink);color:var(--yellow)">Ao vivo</span></h2>
+      <div class="muted when">Acaba em</div><div class="clock num" data-to="${live.f}">${left(live.f - now, true)}</div>
+      <div class="when">${hhmm(live.s)} – ${hhmm(live.f)}</div><div class="bar"><i style="width:${p * 100}%"></i></div>`;
+  } else if (next) {
+    main = `<h2 class="ph">${ico("hourglass")}Próxima Treasure Hour</h2>
+      <div class="clock num" data-to="${next.s}">${left(next.s - now, true)}</div>
+      <div class="when">${relDay(next.s) || weekday(next.s) + " " + ddmm(next.s)} · ${hhmm(next.s)} – ${hhmm(next.f)}</div>`;
+  } else {
+    main = `<h2 class="ph">${ico("hourglass")}Treasure Hour</h2><div class="when">Sem mais horários nesta temporada.</div>`;
+  }
+  el.innerHTML = main + (others.length ? `<div class="next">${others.map(row).join("")}</div>` : "");
+}
+
+// ---------- painel e prêmios: loja ----------
+const TYPE_ICON = { "Traje": "shirt", "Mochila": "bag", "Tela de carregamento": "image", "Carro": "car", "Jam Track": "music", "Token": "skull" };
+function itemTile(p, clickable = true) {
+  const r = p.rarity || "rare";
+  const fallback = `<div class="ph-art" ${p.image ? 'style="display:none"' : ""}>${ico(TYPE_ICON[p.tipo] || "gift")}</div>`;
+  const art = (p.image ? `<img src="${esc(p.image)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">` : "") + fallback;
+  const title = p.auto ? `Caiu no baú ${fmtN(p.bau)}` : p.obtido ? "Marcado à mão. Clique para desmarcar." : "Clique se já tiver este item";
+  return `<button class="item ${r} ${p.obtido ? "got" : ""}" data-prize="${esc(p.nome)}" ${p.auto || !clickable ? "disabled" : ""} title="${title}">
+    ${art}${p.auto ? `<span class="chestno">baú ${fmtN(p.bau)}</span>` : ""}
+    <span class="own">${ico("check")}Na conta</span>
+    <span class="band"><span class="nm">${esc(p.nome)}</span><span class="tp">${esc(p.tipo)}</span></span></button>`;
+}
+function bindPrizes(root) {
+  root.querySelectorAll("[data-prize]:not([disabled])").forEach(b => b.onclick = async () => {
+    await api.toggle_prize(b.dataset.prize); S.prizes = await api.prizes(); renderShop(); if ($("v-premios").classList.contains("on")) renderPrizesFull();
+  });
+}
+function weekBlock(full) {
+  const p = S.prizes; if (!p) return "";
+  let w = p.semana, label, chip;
+  if (w && w.premios.length) { label = `Prêmios da semana ${w.numero}`; chip = `<span class="chip">${ico("refresh")}Saem em <span class="num">${left(ts(w.fim) - Date.now())}</span></span>`; }
+  else if (p.proxima?.premios.length) { w = p.proxima; label = `Prêmios da semana ${w.numero}`; chip = `<span class="chip warn">${ico("refresh")}Começa em <span class="num">${left(ts(w.inicio) - Date.now())}</span></span>`; }
+  else return `<h2 class="ph">${ico("gift")}Prêmios da semana</h2><p class="muted">A lista desta semana ainda não foi publicada.</p>`;
+  const missing = w.premios.filter(x => !x.obtido).length;
+  return `<h2 class="ph">${ico("gift")}${label}${chip}</h2>
+    <div class="shop ${full ? "" : "row"}">${w.premios.map(x => itemTile(x)).join("")}</div>
+    <p class="small" style="margin:12px 0 0">${missing ? `Faltam ${missing} de ${w.premios.length}.` : "Você já tem todos desta semana."} ${full ? "Itens que caem na conta são marcados sozinhos; clique para marcar à mão." : ""}</p>`;
+}
+function renderShop() { $("shopPanel").innerHTML = weekBlock(false); bindPrizes($("shopPanel")); }
+async function renderPrizesFull() {
+  S.prizes = await api.prizes();
+  const p = S.prizes;
+  $("shopFull").innerHTML = weekBlock(true) + `<h2 class="ph" style="margin-top:24px">${ico("skull")}A temporada toda</h2><div class="shop">${p.fixos.map(x => itemTile(x)).join("")}</div>`;
+  bindPrizes($("shopFull"));
+  $("history").innerHTML = `<h2 class="ph">${ico("chest")}Tudo o que já caiu</h2>` + (p.historico.length
+    ? `<table><thead><tr><th>Quando</th><th>Item</th><th class="r">Baú nº</th></tr></thead><tbody>${p.historico.map(d => `<tr>
+        <td class="num">${weekday(d.ts * 1000)} ${ddmm(d.ts * 1000)} · ${hhmm(d.ts * 1000)}</td>
+        <td><b>${esc(d.name || (d.token ? "Pirate Shop Access" : "Item novo"))}</b></td>
+        <td class="r num">${fmtN(d.bau)}</td></tr>`).join("")}</tbody></table>`
+    : `<p class="muted">Nada ainda. Cada item que entrar na conta aparece aqui com o número do baú em que caiu.</p>`);
+}
+
+// ---------- painel: sorte ----------
+function renderOdds() {
+  const n = S.summary?.total || 0, ch = S.event?.chances || [];
+  if (!ch.length) return;
+  const p = c => 1 - Math.pow(1 - 1 / c.n, n);
+  const pct = v => (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: v < 0.01 ? 2 : v < 0.1 ? 1 : 0 }) + "%";
+  const main = ch[0];
+  $("oddsPanel").innerHTML = `<h2 class="ph">${ico("dice")}Chance de já ter o token</h2>
+    <div class="odds-main"><span class="token">${ico("skull")}</span><span class="v num">${pct(p(main))}</span><span class="muted">se for ${esc(main.rotulo)}</span></div>
+    ${ch.map(c => `<div class="odds-row"><span>${esc(c.rotulo)}</span><span class="track"><i style="width:${Math.min(100, p(c) * 100)}%"></i></span><span class="pct num">${pct(p(c))}</span></div>`).join("")}
+    <p class="small" style="margin:12px 0 0">Com ${fmtN(n)} baús. A Epic não divulgou a chance real.</p>`;
 }
 
 // ---------- agenda ----------
-function allEvents() {
-  const ev = state.event; if (!ev) return [];
-  const list = ev.agenda.map(e => ({ ...e, s: ts(e.inicio), f: ts(e.fim) }));
-  ev.semanas.slice(1).forEach(w => list.push({ tipo: "reset", titulo: `Reset: começa a semana ${w.numero}`, s: ts(w.inicio), f: ts(w.inicio) }));
-  return list.sort((a, b) => a.s - b.s);
-}
-function nextReset() {
-  const now = Date.now();
-  const w = (state.event?.semanas || []).find(w => ts(w.inicio) <= now && now < ts(w.fim));
-  return w ? ts(w.fim) : null;
-}
 function renderAgenda() {
-  const now = Date.now();
-  const pill = { treasure: "gold", captain: "teal", reset: "", final: "gold" };
-  $("agendaList").innerHTML = allEvents().map(e => {
-    const live = e.s <= now && now < e.f, past = e.f < now && !live;
-    const right = live ? `<span class="pill gold">acontecendo · acaba em ${fmtLeft(e.f - now)}</span>` : past ? "" : `<span class="muted">em ${fmtLeft(e.s - now)}</span>`;
-    const when = e.f > e.s && e.tipo !== "captain" ? `${fmtDate(e.s)}–${fmtDate(e.f, { weekday: undefined, day: undefined, month: undefined })}` : fmtDate(e.s, e.tipo === "captain" ? { hour: undefined, minute: undefined } : {});
-    return `<div class="event ${live ? "now" : ""} ${past ? "past" : ""}"><span>${when}</span><span><span class="pill ${pill[e.tipo] || ""}">${esc(e.tipo === "treasure" ? "Treasure Hour" : e.tipo === "captain" ? "Captain's Day" : e.tipo === "reset" ? "Reset" : "Final")}</span> ${esc(e.titulo)}${e.aproximado ? " <span class=muted>(horário aproximado)</span>" : ""}</span>${right}</div>`;
+  const now = Date.now(), all = events();
+  const next = all.find(e => e.f > now && e.tipo !== "reset" || e.s > now);
+  if (next) {
+    const live = next.s <= now;
+    $("upNext").innerHTML = `<div class="up-next"><span class="ev ${next.tipo} ${live ? "now" : ""}" style="margin:0;background:none;padding:0"><span class="ico" style="width:64px;height:64px">${ico(EV[next.tipo].icon)}</span></span>
+      <div><div class="big">${esc(EV[next.tipo].name)}${live ? ` <span class="chip live" style="vertical-align:middle;font-style:normal">Ao vivo</span>` : ""}</div>
+      <div class="when muted" style="margin-top:6px">${relDay(next.s) || weekday(next.s) + " " + ddmm(next.s)}${next.tipo === "captain" ? " · dia todo" : " · " + hhmm(next.s) + (next.f > next.s ? "–" + hhmm(next.f) : "")}</div></div>
+      <div class="big num" style="margin-left:auto" title="${live ? "Tempo até acabar" : "Tempo até começar"}"><span class="muted" style="font-size:.5em">${live ? "acaba em " : "em "}</span><span data-to="${live ? next.f : next.s}">${left((live ? next.f : next.s) - now, true)}</span></div></div>`;
+  }
+  const days = new Map();
+  all.forEach(e => { const k = dayKey(e.s); if (!days.has(k)) days.set(k, []); days.get(k).push(e); });
+  $("daysRow").innerHTML = [...days.values()].map(list => {
+    const d = list[0].s, past = list.every(e => e.f < now && e.s < now) && dayKey(d) !== dayKey(now);
+    const rel = relDay(d);
+    return `<div class="day ${past ? "past" : ""}"><h3>${weekday(d)} <span class="num">${ddmm(d)}</span>${rel ? `<span class="chip ${rel === "Hoje" ? "live" : ""}">${rel}</span>` : ""}</h3>
+      ${list.map(e => {
+        const live = e.s <= now && now < e.f, done = e.f < now && !live || (e.tipo === "reset" && e.s < now);
+        const tm = e.tipo === "captain" ? "Dia todo" : e.f > e.s ? `${hhmm(e.s)}–${hhmm(e.f)}` : hhmm(e.s);
+        return `<div class="ev ${e.tipo} ${live ? "now" : ""} ${done ? "done" : ""}"><span class="ico">${ico(EV[e.tipo].icon)}</span>
+          <div><div class="tm num">${tm}${e.aproximado ? "*" : ""}</div><div class="lb">${esc(e.tipo === "reset" ? e.titulo : EV[e.tipo].name)}${live ? " · agora" : ""}</div></div></div>`;
+      }).join("")}</div>`;
   }).join("");
+  const today = $("daysRow").querySelector(".chip.live");
+  today?.closest(".day")?.scrollIntoView({ inline: "start", block: "nearest" });
 }
-
-// ---------- painel ----------
-function renderLive() {
-  const now = Date.now();
-  const th = allEvents().filter(e => e.tipo === "treasure");
-  const live = th.find(e => e.s <= now && now < e.f);
-  const next = th.find(e => e.s > now);
-  let html = "";
-  if (state.status?.error) html += `<div class="banner err"><span>${esc(state.status.error)}</span><button class="btn" onclick="showTab('conta')">Ver conta</button></div>`;
-  else if (state.status && !state.status.logged_in) html += `<div class="banner warn"><span>Conecte sua conta Epic para a contagem começar.</span><button class="btn gold" onclick="showTab('conta')">Conectar</button></div>`;
-  else if (state.summary && !state.summary.has_counter) html += `<div class="banner warn"><span>Falta escolher qual contador conta os baús. Leva 1 minuto.</span><button class="btn gold" onclick="showTab('dados')">Escolher contador</button></div>`;
-  if (live) html += `<div class="banner live"><b>Treasure Hour agora!</b><span>acaba em ${fmtLeft(live.f - now)}</span></div>`;
-  else if (next) html += `<div class="banner" style="border:1px solid var(--line);background:var(--panel)"><span>Próxima Treasure Hour: <b>${fmtDate(next.s)}</b></span><span class="muted">em ${fmtLeft(next.s - now)}</span></div>`;
-  $("liveBanner").innerHTML = html;
-  const r = nextReset();
-  $("resetIn").textContent = r ? fmtLeft(r - now) : "–";
-  if (state.event) $("seasonIn").textContent = `fim da temporada em ${fmtLeft(ts(state.event.fim) - now)}`;
-}
-function renderSummary() {
-  const s = state.summary; if (!s) return;
-  $("total").textContent = fmtN(s.total);
-  $("today").textContent = fmtN(s.today);
-  $("session").textContent = fmtN(s.session);
-  $("rate").textContent = s.rate == null ? "–" : String(s.rate).replace(".", ",");
-  $("lastRefresh").textContent = s.last_refresh ? `atualizado ${fmtDate(s.last_refresh * 1000, { weekday: undefined, day: undefined, month: undefined })}` : "";
-  renderChart(s.per_day);
-}
-function renderChart(days) {
-  if (!days.length) { $("chart").innerHTML = `<p class="muted">As barras aparecem quando os primeiros baús forem contados.</p>`; return; }
-  const last = days.slice(-21), max = Math.max(...last.map(d => d.baus));
-  $("chart").innerHTML = `<div class="bars">${last.map(d => {
-    const label = d.day.slice(8) + "/" + d.day.slice(5, 7);
-    return `<div class="col" title="${label}: ${d.baus} baús"><b>${fmtN(d.baus)}</b><i style="height:${Math.max(2, 130 * d.baus / max)}px"></i><span>${label}</span></div>`;
-  }).join("")}</div>`;
-}
-
-// ---------- prêmios ----------
-async function renderPrizes() {
-  const p = await api.prizes();
-  const item = x => `<div class="check"><button class="box ${x.obtido ? "on" : ""}" ${x.auto ? "disabled title='Marcado sozinho'" : ""} data-prize="${esc(x.nome)}">${x.obtido ? "✓" : ""}</button>
-     <div><div>${esc(x.nome)} <span class="pill">${esc(x.tipo)}</span></div>${x.auto ? `<div class="muted">caiu no baú ${fmtN(x.bau)}</div>` : x.obtido ? `<div class="muted">marcado à mão</div>` : ""}</div></div>`;
-  if (p.semana) {
-    $("weekTitle").textContent = `Semana ${p.semana.numero}`;
-    $("weekSub").textContent = `Estes prêmios saem do pool em ${fmtLeft(ts(p.semana.fim) - Date.now())} (${fmtDate(ts(p.semana.fim))}).`;
-    $("weekList").innerHTML = p.semana.premios.length ? p.semana.premios.map(item).join("") : `<p class="muted">A lista desta semana não foi publicada.</p>`;
-    if (p.proxima?.premios.length) $("weekList").innerHTML += `<h2 style="margin-top:18px">Semana ${p.proxima.numero} <span class="muted" style="font-weight:400">· começa em ${fmtLeft(ts(p.proxima.inicio) - Date.now())}</span></h2>` + p.proxima.premios.map(item).join("");
-  } else { $("weekSub").textContent = "Fora do período do evento."; $("weekList").innerHTML = ""; }
-  $("fixedList").innerHTML = p.fixos.map(item).join("");
-  $("history").innerHTML = p.historico.length ? `<table><thead><tr><th>Quando</th><th>Item</th><th class="num">Baú nº</th></tr></thead><tbody>${p.historico.map(d => `<tr><td>${fmtDate(d.ts * 1000)}</td><td>${esc(d.name || (d.token ? "Pirate Shop Access" : ""))} <span class="mono muted">${esc(d.templateId)}</span></td><td class="num">${fmtN(d.bau)}</td></tr>`).join("")}</tbody></table>` : `<p class="muted">Nada ainda. Cada item novo que entrar na conta aparece aqui com o número do baú.</p>`;
-  document.querySelectorAll("[data-prize]").forEach(b => b.onclick = async () => { await api.toggle_prize(b.dataset.prize); renderPrizes(); });
-}
-
-// ---------- sorte ----------
-let luckManual = null;
-function renderLuck() {
-  const n = luckManual ?? state.summary?.total ?? 0;
-  $("luckChests").value = n;
-  $("luckList").innerHTML = (state.event?.chances || []).map(c => {
-    const p = 1 - Math.pow(1 - 1 / c.n, n);
-    const half = Math.ceil(Math.log(0.5) / Math.log(1 - 1 / c.n));
-    return `<div class="card"><div class="row" style="justify-content:space-between"><b>${esc(c.rotulo)}</b><span class="muted">${esc(c.fonte)}</span></div>
-      <div class="big">${(p * 100).toLocaleString("pt-BR", { maximumFractionDigits: p < 0.01 ? 2 : 1 })}%</div>
-      <div class="bar"><i style="width:${Math.min(100, p * 100)}%"></i></div>
-      <p class="muted" style="margin:8px 0 0">Metade dos jogadores tiraria até o baú ${fmtN(half)}.</p></div>`;
-  }).join("");
-}
-$("luckChests").oninput = e => { luckManual = Math.max(0, +e.target.value || 0); renderLuck(); };
-$("luckReset").onclick = () => { luckManual = null; renderLuck(); };
-
-// ---------- contadores ----------
-let counterCache = [];
-async function renderCounters(fetch = true) {
-  if (fetch) counterCache = await api.counters();
-  const q = $("filter").value.toLowerCase(), only = $("onlyHints").checked;
-  const rows = counterCache.filter(r => (!q || r.key.toLowerCase().includes(q)) && (!only || r.hint || r.selected));
-  $("counterRows").innerHTML = rows.length ? rows.slice(0, 400).map(r => `<tr>
-     <td><button class="box ${r.selected ? "on" : ""}" data-key="${esc(r.key)}">${r.selected ? "✓" : ""}</button></td>
-     <td><span class="mono">${esc(r.key)}</span> ${r.hint ? '<span class="pill gold">evento?</span>' : ""}</td>
-     <td class="num">${fmtN(r.value)}</td>
-     <td class="num">${r.delta ? `<span class="up">${r.delta > 0 ? "+" : ""}${fmtN(r.delta)}</span>` : ""}</td></tr>`).join("")
-    : `<tr><td colspan="4" class="muted">${counterCache.length ? "Nada com esse filtro." : "Nenhum dado ainda. Conecte a conta e clique em Atualizar."}</td></tr>`;
-  document.querySelectorAll("[data-key]").forEach(b => b.onclick = async () => {
-    const on = !b.classList.contains("on");
-    state.summary = await api.set_counter(b.dataset.key, on);
-    renderSummary(); renderLive(); renderCounters();
-    if (on) toast("Contador marcado. O valor atual já entra no total.");
-  });
-}
-$("filter").oninput = () => renderCounters(false);
-$("onlyHints").onchange = () => renderCounters(false);
-$("exportBtn").onclick = async () => { const f = await api.export_diagnostics(); toast("Diagnóstico salvo em " + f); };
 
 // ---------- conta ----------
 async function renderAccount() {
-  const s = state.status = await api.status();
-  $("accountBox").innerHTML = s.logged_in ? `
-    <div class="card"><p>Conectado como <b>${esc(s.name || "sua conta")}</b>.</p>
-    <p class="muted">O login fica salvo só neste PC, em <span class="mono">${esc(s.data_folder)}</span>. Ele dá acesso à conta: não envie o arquivo <span class="mono">login.json</span> para ninguém.</p>
-    <div class="row"><button class="btn" id="folderBtn">Abrir pasta de dados</button><button class="btn" id="logoutBtn">Desconectar</button></div></div>` : `
-    <div class="card"><ol class="steps">
-      <li>Clique no botão abaixo. O navegador abre a página da Epic. Entre na sua conta se ela pedir.<br><button class="btn gold" id="openLogin" style="margin-top:8px">Abrir página da Epic</button></li>
-      <li>A página mostra um texto com <span class="mono">"authorizationCode"</span>. Copie tudo e cole aqui:<br><textarea id="codeBox" placeholder='{"redirectUrl":"...","authorizationCode":"..."}'></textarea></li>
-      <li><button class="btn gold" id="loginBtn">Conectar</button> <span id="loginMsg" class="muted"></span></li>
-    </ol>
-    <p class="muted">O código vale uma vez e vence em cerca de 5 minutos. A ferramenta só lê o perfil: não compra, não muda nada e não envia seus dados para nenhum servidor além da Epic.</p></div>`;
-  if (s.logged_in) {
-    $("folderBtn").onclick = () => api.open_data_folder();
-    $("logoutBtn").onclick = async () => { await api.logout(); boot(); renderAccount(); };
-  } else {
+  const s = S.status = await api.status();
+  if (!s.logged_in) {
+    $("accountPanel").innerHTML = `<h2 class="ph">${ico("user")}Conectar conta Epic</h2>
+      <ol class="steps">
+        <li><div><b>Abra a página da Epic</b><div class="muted">Entre na sua conta se ela pedir.</div>
+          <button class="btn go" id="openLogin" style="margin-top:10px">${ico("link")}<span>Abrir página da Epic</span></button></div></li>
+        <li><div><b>Copie tudo o que aparecer e cole aqui</b>
+          <textarea id="codeBox" placeholder='{"redirectUrl":"…","authorizationCode":"…"}'></textarea></div></li>
+        <li><div><button class="btn go" id="loginBtn">${ico("check")}<span>Conectar</span></button>
+          <div class="small" id="loginMsg" style="margin-top:8px">O código vence em uns 5 minutos.</div></div></li>
+      </ol>
+      <p class="small" style="margin:18px 0 0">O app só lê o perfil. O login fica salvo só neste PC.</p>`;
     $("openLogin").onclick = () => api.open_login();
     $("loginBtn").onclick = async () => {
       $("loginMsg").textContent = "Conectando…";
       const r = await api.login($("codeBox").value);
       if (!r.ok) { $("loginMsg").textContent = r.error; return; }
-      toast(`Conectado como ${r.name}`);
-      await renderAccount(); await refresh(); showTab("dados");
+      toast(`Conectado como ${r.name}`); await refresh(); tab("painel");
     };
+    return;
   }
-  $("navfoot").textContent = `v${s.version}` + (s.logged_in && s.name ? ` · ${s.name}` : "");
+  const rows = await api.counters();
+  $("accountPanel").innerHTML = `<h2 class="ph">${ico("user")}Conta Epic</h2>
+    <p style="font:400 30px/1 var(--display);text-transform:uppercase;margin:0 0 6px">${esc(s.name || "Conectado")}</p>
+    <p class="small" style="margin:0 0 16px">Login salvo só neste PC, em ${esc(s.data_folder)}. Não envie o arquivo login.json para ninguém.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="folderBtn">${ico("folder")}<span>Abrir pasta de dados</span></button>
+      <button class="btn" id="diagBtn">${ico("dice")}<span>Gerar diagnóstico</span></button>
+      <button class="btn ghost" id="logoutBtn">${ico("logout")}<span>Desconectar</span></button>
+    </div>
+    <details><summary>Avançado: todos os contadores da conta</summary>
+      <p class="small">Só contadores de missão podem contar baús. Estatísticas da conta, como nível, nunca entram na contagem.</p>
+      <table><thead><tr><th>Contador</th><th class="r">Valor</th><th></th></tr></thead><tbody>
+      ${rows.slice(0, 300).map(r => `<tr><td><code>${esc(r.key)}</code></td><td class="r num">${fmtN(r.value)}</td>
+        <td class="r">${r.selected ? `<span class="chip ok">${ico("check")}Em uso</span>` : r.key.startsWith("Quest:") || r.key.startsWith("ChallengeBundle") ? `<button class="btn ghost" data-use="${esc(r.key)}" style="padding:6px 10px;font-size:13px"><span>Usar</span></button>` : ""}</td></tr>`).join("")}
+      </tbody></table></details>`;
+  $("folderBtn").onclick = () => api.open_data_folder();
+  $("diagBtn").onclick = async () => toast("Diagnóstico salvo em " + await api.export_diagnostics());
+  $("logoutBtn").onclick = async () => { await api.logout(); await boot(); renderAccount(); };
+  document.querySelectorAll("[data-use]").forEach(b => b.onclick = async () => {
+    if (!confirm("Usar este contador como contagem de baús? Confira se o número bate com o do jogo.")) return;
+    S.summary = await api.set_counter(b.dataset.use); toast("Contador trocado"); renderAll(); renderAccount();
+  });
 }
 
-// ---------- atualização ----------
+// ---------- geral ----------
+function renderTop() {
+  const s = S.status;
+  $("who").innerHTML = s?.logged_in && s.name ? `${ico("user")}${esc(s.name)}` : "";
+  $("updated").textContent = S.summary?.last_refresh ? "lido às " + hhmm(S.summary.last_refresh * 1000) : "";
+  $("banner").innerHTML = s?.error ? `<div class="banner">${ico("alert")}<span>${esc(s.error)}</span><button class="btn" onclick="tab('conta')"><span>Ver conta</span></button></div>` : "";
+}
+function renderAll() { renderTop(); renderChest(); renderTH(); renderShop(); renderOdds(); }
+
+let lastTotal = null;
+function rollNumber() {
+  const el = $("chestNum"); if (!el || lastTotal == null || S.summary.total <= lastTotal) { lastTotal = S.summary?.total ?? null; return; }
+  const from = lastTotal, to = S.summary.total, t0 = performance.now(), dur = 900;
+  lastTotal = to;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 4); el.textContent = fmtN(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
 async function refresh() {
-  const btns = [$("refreshBtn"), $("refreshBtn2")]; btns.forEach(b => b.disabled = true);
+  const b = $("refreshBtn"); b.disabled = true; b.classList.add("spin");
   try {
     const r = await api.refresh();
-    if (r.ok && r.token?.length) { $("tokenText").textContent = `Caiu no baú ${fmtN((await api.dashboard()).total)}.`; $("tokenModal").classList.remove("hidden"); }
+    if (r.ok && r.token?.length) { S.summary = await api.dashboard(); $("tokText").textContent = `Caiu no baú ${fmtN(S.summary.total)}.`; $("tokenOverlay").classList.add("on"); $("tokClose").focus(); }
     else if (r.ok && r.new_names?.length) toast("Item novo: " + r.new_names.join(", "));
-    state.status = await api.status();
-    state.summary = await api.dashboard();
-    renderSummary(); renderLive();
-    if (!$("dados").classList.contains("hidden")) renderCounters();
-    if (!$("premios").classList.contains("hidden") && r.new_items?.length) renderPrizes();
-  } finally { btns.forEach(b => b.disabled = false); }
+    S.status = await api.status(); S.summary = await api.dashboard(); S.prizes = await api.prizes();
+    renderAll(); rollNumber();
+    if ($("v-premios").classList.contains("on") && r.new_items?.length) renderPrizesFull();
+  } finally { b.disabled = false; b.classList.remove("spin"); }
 }
 $("refreshBtn").onclick = refresh;
-$("refreshBtn2").onclick = refresh;
+$("tokClose").onclick = () => $("tokenOverlay").classList.remove("on");
 
 async function boot() {
-  state.status = await api.status();
-  state.event = await api.get_event();
-  state.summary = await api.dashboard();
-  $("tokenDeadline").textContent = fmtDate(ts(state.event.token_2026_prazo), { weekday: undefined, hour: undefined, minute: undefined });
-  $("navfoot").textContent = `v${state.status.version}` + (state.status.name ? ` · ${state.status.name}` : "");
-  renderSummary(); renderLive();
-  if (state.status.logged_in) refresh();
+  S.status = await api.status(); S.event = await api.get_event(); S.summary = await api.dashboard();
+  lastTotal = S.summary.total;
+  $("tokDeadline").textContent = dtf({ day: "2-digit", month: "2-digit" }).format(ts(S.event.token_2026_prazo));
+  renderAll();
+  // As imagens dos prêmios podem demorar: a loja aparece quando chegarem.
+  $("shopPanel").innerHTML = `<h2 class="ph">${ico("gift")}Prêmios da semana</h2><p class="muted">Carregando os itens…</p>`;
+  api.prizes().then(p => { S.prizes = p; renderShop(); });
+  if (S.status.logged_in) refresh();
 }
-
+function tick() {
+  document.querySelectorAll("[data-to]").forEach(el => {
+    const ms = +el.dataset.to - Date.now();
+    if (ms <= 0) { renderTH(); if ($("v-agenda").classList.contains("on")) renderAgenda(); return; }
+    el.textContent = left(ms, true);
+  });
+}
 function start(a) {
   api = a; boot();
-  setInterval(() => { if (state.status?.logged_in) refresh(); }, 90 * 1000);
-  setInterval(renderLive, 30 * 1000);
+  setInterval(tick, 1000);
+  setInterval(() => { if (S.status?.logged_in) refresh(); }, 90 * 1000);
 }
 if (window.pywebview?.api) start(window.pywebview.api);
 else window.addEventListener("pywebviewready", () => start(window.pywebview.api));
-// Fora do app (só para testar a tela no navegador), usa dados de exemplo.
 setTimeout(() => { if (!api && window.MOCK_API) start(window.MOCK_API); }, 300);
 </script>
-<script src="mock.js" onerror="void 0"></script>
+<script src="mock.js"></script>
 </body>
 </html>

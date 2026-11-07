@@ -42,7 +42,7 @@ class FakeAccount:
 
 folder = tempfile.mkdtemp(prefix="caca-dev-")
 api = Api(store=Store(folder), profile_source=FakeAccount().profile)
-api._catalog.names.update({"AthenaLoadingScreen:lsid_sokawaii": "So Kawaii"})
+api._catalog.cache["id:lsid_sokawaii"] = {"name": "So Kawaii", "image": None, "rarity": "uncommon", "found": True, "at": 9e12}
 
 MOCK_JS = b"""
 window.MOCK_API = new Proxy({}, { get: (_, name) => async (...args) => {
@@ -63,12 +63,15 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
-            with open(os.path.join(ROOT, "ui", "index.html"), "rb") as f:
-                return self._send(f.read(), "text/html; charset=utf-8")
         if self.path == "/mock.js":
             return self._send(MOCK_JS, "text/javascript")
-        self._send(b"", code=404)
+        rel = "index.html" if self.path in ("/", "") else self.path.lstrip("/").split("?")[0]
+        full = os.path.normpath(os.path.join(ROOT, "ui", rel))
+        if not full.startswith(os.path.join(ROOT, "ui")) or not os.path.isfile(full):
+            return self._send(b"", code=404)
+        types = {".html": "text/html; charset=utf-8", ".woff2": "font/woff2", ".js": "text/javascript"}
+        with open(full, "rb") as f:
+            self._send(f.read(), types.get(os.path.splitext(full)[1], "application/octet-stream"))
 
     def do_POST(self):
         name = self.path.rsplit("/", 1)[-1]
