@@ -14,7 +14,7 @@ import epic  # noqa: E402
 from catalog import Catalog, same_name  # noqa: E402
 from tracker import Store, Tracker, looks_like_token  # noqa: E402
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 REPO = "andreymira2/caca-ao-token"
 EVENT_URL = f"https://raw.githubusercontent.com/{REPO}/main/data/evento.json"
 

@@ -1,0 +1,710 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T15:37:46+00:00",
+  "title": "Design System: Caça ao Token",
+  "extensions": {
+    "colorMeta": {
+      "lobby-navy": {
+        "role": "neutral",
+        "displayName": "Lobby Navy",
+        "canonical": "#071447",
+        "tonalRamp": [
+          "#010133",
+          "#0F1F53",
+          "#2A3E75",
+          "#485F98",
+          "#6880BD",
+          "#89A4E2",
+          "#ACC8FF",
+          "#D1EEFF"
+        ]
+      },
+      "lobby-deep": {
+        "role": "neutral",
+        "displayName": "Lobby Deep",
+        "canonical": "#0B1E66",
+        "tonalRamp": [
+          "#030040",
+          "#081A62",
+          "#223B85",
+          "#3F5CA9",
+          "#5E7FCF",
+          "#7FA2F5",
+          "#A2C7FF",
+          "#C6EDFF"
+        ]
+      },
+      "lobby-royal": {
+        "role": "neutral",
+        "displayName": "Lobby Royal",
+        "canonical": "#1840C0",
+        "tonalRamp": [
+          "#10005F",
+          "#050084",
+          "#0B2CAA",
+          "#2753D0",
+          "#4577F8",
+          "#669DFF",
+          "#88C2FF",
+          "#ACE9FF"
+        ]
+      },
+      "lobby-sky": {
+        "role": "neutral",
+        "displayName": "Lobby Sky",
+        "canonical": "#2F6BFF",
+        "tonalRamp": [
+          "#0F005F",
+          "#010084",
+          "#032DA9",
+          "#2254D0",
+          "#4178F8",
+          "#629DFF",
+          "#85C3FF",
+          "#A8EAFF"
+        ]
+      },
+      "panel-glass": {
+        "role": "neutral",
+        "displayName": "Panel Glass",
+        "canonical": "rgba(4, 12, 52, .62)",
+        "tonalRamp": [
+          "#02052C",
+          "#14214B",
+          "#2F406C",
+          "#4D608F",
+          "#6D81B3",
+          "#8FA4D8",
+          "#B2C8FE",
+          "#D7EEFF"
+        ],
+        "note": "Translucent token; ramp built from its opaque base colour."
+      },
+      "panel-hi": {
+        "role": "neutral",
+        "displayName": "Panel Highlight",
+        "canonical": "rgba(255, 255, 255, .07)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ],
+        "note": "Translucent token; ramp built from its opaque base colour."
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "rgba(255, 255, 255, .14)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ],
+        "note": "Translucent token; ramp built from its opaque base colour."
+      },
+      "text-white": {
+        "role": "neutral",
+        "displayName": "Text White",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "text-soft": {
+        "role": "neutral",
+        "displayName": "Text Soft",
+        "canonical": "#C3D0FF",
+        "tonalRamp": [
+          "#050627",
+          "#1B2145",
+          "#363F66",
+          "#545F88",
+          "#7580AB",
+          "#97A3D0",
+          "#BAC7F6",
+          "#DFECFF"
+        ]
+      },
+      "text-dim": {
+        "role": "neutral",
+        "displayName": "Text Dim",
+        "canonical": "#8EA0E6",
+        "tonalRamp": [
+          "#050036",
+          "#161C56",
+          "#303C79",
+          "#4D5C9C",
+          "#6D7EC1",
+          "#8FA1E7",
+          "#B2C5FF",
+          "#D6EBFF"
+        ]
+      },
+      "lobby-yellow": {
+        "role": "primary",
+        "displayName": "Lobby Yellow",
+        "canonical": "#FFE14D",
+        "tonalRamp": [
+          "#1E0200",
+          "#3C1E00",
+          "#5B3D00",
+          "#7B5E00",
+          "#9E8000",
+          "#C1A400",
+          "#E6C92A",
+          "#FFEF5D"
+        ]
+      },
+      "lobby-yellow-hover": {
+        "role": "primary",
+        "displayName": "Lobby Yellow Hover",
+        "canonical": "#FFEA7A",
+        "tonalRamp": [
+          "#1A0500",
+          "#362100",
+          "#554000",
+          "#756000",
+          "#978200",
+          "#BAA62E",
+          "#DFCA59",
+          "#FFF080"
+        ]
+      },
+      "yellow-ink": {
+        "role": "primary",
+        "displayName": "Yellow Ink",
+        "canonical": "#2A2100",
+        "tonalRamp": [
+          "#120A00",
+          "#2D2402",
+          "#4B4220",
+          "#6B613F",
+          "#8C825F",
+          "#AFA581",
+          "#D4C9A4",
+          "#FAEFC8"
+        ]
+      },
+      "confirm-green": {
+        "role": "tertiary",
+        "displayName": "Confirm Green",
+        "canonical": "#63E06B",
+        "tonalRamp": [
+          "#001700",
+          "#003700",
+          "#005800",
+          "#007A00",
+          "#009E26",
+          "#42C34E",
+          "#6CE973",
+          "#94FF99"
+        ]
+      },
+      "alert-red": {
+        "role": "tertiary",
+        "displayName": "Alert Red",
+        "canonical": "#FF6A5C",
+        "tonalRamp": [
+          "#3C0000",
+          "#630000",
+          "#8B0000",
+          "#B21C19",
+          "#DB483E",
+          "#FF6E60",
+          "#FF9483",
+          "#FFBAA7"
+        ]
+      },
+      "rarity-common-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Common (light stop)",
+        "canonical": "#A2A7B0",
+        "tonalRamp": [
+          "#080B11",
+          "#21252C",
+          "#3E424A",
+          "#5D616A",
+          "#7E838B",
+          "#A0A5AE",
+          "#C4C9D3",
+          "#E9EFF8"
+        ]
+      },
+      "rarity-common-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Common (dark stop)",
+        "canonical": "#5B6069",
+        "tonalRamp": [
+          "#080B12",
+          "#21252D",
+          "#3D424B",
+          "#5C616A",
+          "#7D838C",
+          "#A0A5AF",
+          "#C4C9D4",
+          "#E9EFF9"
+        ]
+      },
+      "rarity-uncommon-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Uncommon (light stop)",
+        "canonical": "#7FD32C",
+        "tonalRamp": [
+          "#001400",
+          "#003300",
+          "#005400",
+          "#287600",
+          "#4B9900",
+          "#6EBE14",
+          "#92E44C",
+          "#B6FF75"
+        ]
+      },
+      "rarity-uncommon-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Uncommon (dark stop)",
+        "canonical": "#2B7A0B",
+        "tonalRamp": [
+          "#001500",
+          "#003300",
+          "#005300",
+          "#257500",
+          "#4A9833",
+          "#6DBC58",
+          "#91E17C",
+          "#B6FFA1"
+        ]
+      },
+      "rarity-rare-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Rare (light stop)",
+        "canonical": "#4FC8FF",
+        "tonalRamp": [
+          "#000837",
+          "#002958",
+          "#004A7A",
+          "#006C9E",
+          "#008EC3",
+          "#34B3E9",
+          "#61D8FF",
+          "#89FEFF"
+        ]
+      },
+      "rarity-rare-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Rare (dark stop)",
+        "canonical": "#1660B2",
+        "tonalRamp": [
+          "#000047",
+          "#001B69",
+          "#003E8D",
+          "#1660B2",
+          "#3D83D8",
+          "#61A7FF",
+          "#84CCFF",
+          "#A9F2FF"
+        ]
+      },
+      "rarity-epic-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Epic (light stop)",
+        "canonical": "#CE6BFF",
+        "tonalRamp": [
+          "#250044",
+          "#440066",
+          "#65008A",
+          "#872EAF",
+          "#AB54D5",
+          "#D079FC",
+          "#F69EFF",
+          "#FFC3FF"
+        ]
+      },
+      "rarity-epic-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Epic (dark stop)",
+        "canonical": "#6418AE",
+        "tonalRamp": [
+          "#200050",
+          "#390074",
+          "#560399",
+          "#7538BF",
+          "#965DE6",
+          "#B982FF",
+          "#DDA7FF",
+          "#FFCDFF"
+        ]
+      },
+      "rarity-legendary-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Legendary (light stop)",
+        "canonical": "#FFB24A",
+        "tonalRamp": [
+          "#2B0000",
+          "#4D0600",
+          "#6F2C00",
+          "#934D00",
+          "#B87000",
+          "#DE9320",
+          "#FFB750",
+          "#FFDD78"
+        ]
+      },
+      "rarity-legendary-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Legendary (dark stop)",
+        "canonical": "#C14F14",
+        "tonalRamp": [
+          "#350000",
+          "#5B0000",
+          "#800800",
+          "#A73600",
+          "#CE5B24",
+          "#F67F4C",
+          "#FFA370",
+          "#FFC995"
+        ]
+      },
+      "rarity-mythic-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Mythic (light stop)",
+        "canonical": "#FFE36A",
+        "tonalRamp": [
+          "#1D0300",
+          "#3A1F00",
+          "#593E00",
+          "#795E00",
+          "#9C8000",
+          "#BFA41A",
+          "#E4C94D",
+          "#FFEE76"
+        ]
+      },
+      "rarity-mythic-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Mythic (dark stop)",
+        "canonical": "#C2860E",
+        "tonalRamp": [
+          "#260000",
+          "#471100",
+          "#693200",
+          "#8C5300",
+          "#B07500",
+          "#D5982E",
+          "#FBBC59",
+          "#FFE27F"
+        ]
+      },
+      "rarity-icon-hi": {
+        "role": "secondary",
+        "displayName": "Rarity Icon (light stop)",
+        "canonical": "#3BE0E6",
+        "tonalRamp": [
+          "#00151F",
+          "#00343C",
+          "#00545B",
+          "#00757C",
+          "#00989F",
+          "#00BDC3",
+          "#3FE2E8",
+          "#70FFFF"
+        ]
+      },
+      "rarity-icon-lo": {
+        "role": "secondary",
+        "displayName": "Rarity Icon (dark stop)",
+        "canonical": "#0D6E82",
+        "tonalRamp": [
+          "#001022",
+          "#002D40",
+          "#004C5F",
+          "#0A6D81",
+          "#3B8FA4",
+          "#61B3C8",
+          "#85D7ED",
+          "#ABFDFF"
+        ]
+      }
+    },
+    "gradients": [
+      {
+        "name": "lobby-field",
+        "value": "linear-gradient(115deg, transparent 18%, rgba(140,190,255,.10) 24%, transparent 32%), linear-gradient(115deg, transparent 58%, rgba(140,190,255,.07) 63%, transparent 70%), radial-gradient(ellipse 90% 70% at 28% -10%, #2F6BFF 0%, #1840C0 38%, #0B1E66 72%, #071447 100%)",
+        "purpose": "Fixed app background: lobby radial with two diagonal light streaks."
+      },
+      {
+        "name": "rarity-*",
+        "value": "linear-gradient(160deg, <rarity-hi>, <rarity-lo>)",
+        "purpose": "Item tile fills, token medallion, event-type icon wells."
+      },
+      {
+        "name": "treasure-live",
+        "value": "linear-gradient(160deg, #FFE96E, #FFC21F)",
+        "purpose": "Treasure Hour panel while the hour is live."
+      },
+      {
+        "name": "header-scrim",
+        "value": "linear-gradient(180deg, rgba(3,9,40,.75), rgba(3,9,40,.35))",
+        "purpose": "Header bar over the field."
+      },
+      {
+        "name": "tile-band",
+        "value": "linear-gradient(0deg, rgba(0,0,20,.85), rgba(0,0,20,.55))",
+        "purpose": "Name band at the foot of item tiles."
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The chest count only; skewed -7deg; 84px in short windows."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Treasure Hour countdown; 64px odds percentage and 54px next-event use the same voice."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Secondary stats, agenda times and day names (21-34px)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel headings in Text Soft with a yellow line icon."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Buttons and header tabs, uppercase, in skewed boxes."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Short sentences, event labels, list rows."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chips, stat captions, item types, owned stamps, table heads; uppercase."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel-lift",
+        "value": "0 10px 30px rgba(0,0,20,.25)",
+        "purpose": "Every panel at rest."
+      },
+      {
+        "name": "floating",
+        "value": "0 10px 30px rgba(0,0,0,.4)",
+        "purpose": "Toast."
+      },
+      {
+        "name": "modal",
+        "value": "0 20px 60px rgba(0,0,0,.5)",
+        "purpose": "Token-found card over an 80% navy scrim."
+      },
+      {
+        "name": "tile-rim",
+        "value": "inset 0 0 0 2px rgba(255,255,255,.25)",
+        "purpose": "Bright inner frame on item tiles."
+      },
+      {
+        "name": "art-drop",
+        "value": "drop-shadow(0 6px 8px rgba(0,0,0,.35))",
+        "purpose": "filter on item art cut-outs."
+      },
+      {
+        "name": "token-ring",
+        "value": "0 0 0 3px rgba(255,225,77,.3)",
+        "purpose": "Halo around the token medallion."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state",
+        "value": "0.15s ease",
+        "purpose": "Button background/transform and tile hover lift (translateY -2px)."
+      },
+      {
+        "name": "toast",
+        "value": "0.2s ease",
+        "purpose": "Toast fades in and rises 10px."
+      },
+      {
+        "name": "spin",
+        "value": "1s linear infinite",
+        "purpose": "Refresh icon while reading the account."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "All transitions and animations off."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "header-tight",
+        "value": "max-width: 1100px"
+      },
+      {
+        "name": "single-column",
+        "value": "max-width: 900px"
+      },
+      {
+        "name": "short-window",
+        "value": "max-height: 760px"
+      }
+    ],
+    "skew": {
+      "controls": "skewX(-8deg) with contents counter-skewed skewX(8deg)",
+      "type": "skewX(-7deg), transform-origin 0 100%"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one yellow action per view (Atualizar, Conectar).",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><path d=\"M20 11a8 8 0 0 0-14.3-4.9L4 8\"/><path d=\"M4 3v5h5\"/><path d=\"M4 13a8 8 0 0 0 14.3 4.9L20 16\"/><path d=\"M20 21v-5h-5\"/></svg><span>Atualizar</span></button>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}.ds-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:0;border-radius:3px;font:400 16px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg);transition:background .15s,transform .15s;cursor:pointer;}.ds-btn>*{transform:skewX(8deg);}.ds-btn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;}.ds-btn-primary{background:var(--yellow);color:var(--yellow-ink);}.ds-btn-primary:hover{background:#FFEA7A;}.ds-btn-primary:active{transform:skewX(-8deg) translateY(1px);}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Non-primary actions on the lobby field.",
+      "html": "<div style=\"background:#0B1E66;padding:16px\"><button class=\"ds-btn ds-btn-secondary\"><span>Fechar</span></button></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:0;border-radius:3px;font:400 16px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg);transition:background .15s,transform .15s;cursor:pointer;}.ds-btn>*{transform:skewX(8deg);}.ds-btn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;}.ds-btn-secondary{background:rgba(255,255,255,.12);color:#fff;}.ds-btn-secondary:hover{background:rgba(255,255,255,.2);}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-emphasis re-check action (Conferir de novo).",
+      "html": "<div style=\"background:#0B1E66;padding:16px\"><button class=\"ds-btn ds-btn-ghost\"><span>Conferir de novo</span></button></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:0;border-radius:3px;font:400 16px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg);transition:background .15s,transform .15s;cursor:pointer;}.ds-btn>*{transform:skewX(8deg);}.ds-btn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;}.ds-btn-ghost{background:none;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3);}.ds-btn-ghost:hover{background:rgba(255,255,255,.12);}"
+    },
+    {
+      "name": "Header Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Parallelogram icon tabs; active is solid yellow.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-tab on\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><path d=\"M3 10h18v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z\"/><path d=\"M3 10V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2\"/><path d=\"M10 10v3h4v-3\"/></svg><span>Painel</span></button><button class=\"ds-tab\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"8\" width=\"18\" height=\"5\" rx=\"1\"/><path d=\"M5 13v8h14v-8M12 8v13\"/><path d=\"M12 8S10.5 3 8 3.5 7 8 12 8zm0 0s1.5-5 4-4.5S17 8 12 8z\"/></svg><span>Prêmios</span></button></nav>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}.ds-nav{display:flex;gap:6px;padding:14px;background:#0B1E66;}.ds-tab{display:flex;align-items:center;gap:8px;padding:9px 18px;background:none;border:0;border-radius:3px;color:var(--soft);font:400 17px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;transform:skewX(-8deg);cursor:pointer;}.ds-tab>*{transform:skewX(8deg);}.ds-tab:hover{color:#fff;background:rgba(255,255,255,.07);}.ds-tab.on{color:var(--yellow-ink);background:var(--yellow);}.ds-tab:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;}"
+    },
+    {
+      "name": "Status Chips",
+      "kind": "chip",
+      "refersTo": "chip-confirmed",
+      "description": "Trust and live states in panel headings.",
+      "html": "<div style=\"display:flex;gap:8px;background:#0B1E66;padding:16px\"><span class=\"ds-chip ok\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><path d=\"M4 12.5l5 5L20 6.5\"/></svg>Confere com o jogo</span><span class=\"ds-chip live\">Ao vivo</span><span class=\"ds-chip\">Saem em 6d 22h</span></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}.ds-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:3px;font:700 13px/1 var(--ui);text-transform:uppercase;letter-spacing:.04em;background:rgba(255,255,255,.12);color:#fff;white-space:nowrap;}.ds-chip .ds-i{width:15px;height:15px;}.ds-chip.ok{background:rgba(99,224,107,.18);color:#63E06B;}.ds-chip.live{background:var(--yellow);color:var(--yellow-ink);}"
+    },
+    {
+      "name": "Chest Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Glass panel with leaning title and display-scale count.",
+      "html": "<div class=\"ds-field\"><div class=\"ds-panel\"><h2 class=\"ds-ph\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><path d=\"M3 10h18v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z\"/><path d=\"M3 10V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v2\"/><path d=\"M10 10v3h4v-3\"/></svg>Baús abertos no evento</h2><div class=\"ds-big\">45</div><div class=\"ds-cap\">Hoje · 8</div></div></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}.ds-field{padding:20px;background:radial-gradient(ellipse 90% 70% at 28% -10%,#2F6BFF 0%,#1840C0 38%,#0B1E66 72%,#071447 100%);}.ds-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px 20px;box-shadow:0 10px 30px rgba(0,0,20,.25);color:#fff;}.ds-ph{display:flex;align-items:center;gap:10px;margin:0 0 14px;font:400 18px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;color:var(--soft);transform:skewX(-7deg);transform-origin:0 100%;}.ds-ph .ds-i{color:var(--yellow);}.ds-big{font:400 128px/.9 var(--display);letter-spacing:-.01em;transform:skewX(-7deg);transform-origin:0 100%;font-variant-numeric:tabular-nums;}.ds-cap{margin-top:10px;font:700 13px/1 var(--ui);text-transform:uppercase;letter-spacing:.05em;color:var(--soft);}"
+    },
+    {
+      "name": "Prize Tile",
+      "kind": "custom",
+      "refersTo": "item-tile",
+      "description": "Signature item-shop tile: rarity gradient, art, name band, owned stamp.",
+      "html": "<div style=\"display:flex;gap:12px;background:#0B1E66;padding:16px\"><button class=\"ds-item legendary\"><svg class=\"ds-i ds-art\" viewBox=\"0 0 24 24\"><path d=\"M8 3l-5 3 2 5 3-1v11h8V10l3 1 2-5-5-3a4 4 0 0 1-8 0z\"/></svg><span class=\"ds-band\"><span class=\"ds-nm\">Solid Gold Lil' Uzi Vert</span><span class=\"ds-tp\">Traje</span></span></button><button class=\"ds-item rare got\"><span class=\"ds-own\"><svg class=\"ds-i\" viewBox=\"0 0 24 24\"><path d=\"M4 12.5l5 5L20 6.5\"/></svg>Na conta</span><svg class=\"ds-i ds-art\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"8\" width=\"18\" height=\"5\" rx=\"1\"/><path d=\"M5 13v8h14v-8M12 8v13\"/><path d=\"M12 8S10.5 3 8 3.5 7 8 12 8zm0 0s1.5-5 4-4.5S17 8 12 8z\"/></svg><span class=\"ds-band\"><span class=\"ds-nm\">So Kawaii</span><span class=\"ds-tp\">Tela de carregamento</span></span></button></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}.ds-item{position:relative;width:150px;aspect-ratio:3/4;border-radius:5px;overflow:hidden;border:0;padding:0;text-align:left;box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);transition:transform .15s;cursor:pointer;}.ds-item:hover{transform:translateY(-2px);}.ds-item:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;}.ds-item::before{content:\"\";position:absolute;inset:0;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.35),transparent 60%);}.ds-item.legendary{background:linear-gradient(160deg,#FFB24A,#C14F14);}.ds-item.rare{background:linear-gradient(160deg,#4FC8FF,#1660B2);}.ds-art{position:absolute;left:50%;top:37%;width:54px;height:54px;margin:-27px 0 0 -27px;color:rgba(255,255,255,.75);stroke-width:1.6;}.ds-item.got .ds-art{opacity:.55;}.ds-band{position:absolute;left:0;right:0;bottom:0;padding:8px 10px 9px;background:linear-gradient(0deg,rgba(0,0,20,.85),rgba(0,0,20,.55));}.ds-nm{display:block;font:400 15px/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em;color:#fff;transform:skewX(-7deg);transform-origin:0 100%;}.ds-tp{display:block;font:700 11px/1.2 var(--ui);text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.7);margin-top:3px;}.ds-own{position:absolute;top:8px;right:8px;display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:3px;background:var(--yellow);color:var(--yellow-ink);font:700 11px/1 var(--ui);text-transform:uppercase;letter-spacing:.05em;z-index:1;}.ds-own .ds-i{width:13px;height:13px;stroke-width:3;}"
+    },
+    {
+      "name": "In-game Count Input",
+      "kind": "input",
+      "refersTo": "input-game",
+      "description": "Number field for confirming the count against the game.",
+      "html": "<div style=\"background:#0B1E66;padding:16px\"><input class=\"ds-input\" value=\"37\" inputmode=\"numeric\" aria-label=\"Baús no jogo\"></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-input{width:140px;padding:10px 12px;border-radius:3px;border:2px solid rgba(255,255,255,.25);background:rgba(0,0,30,.45);color:#fff;font:400 22px/1 var(--display);letter-spacing:.02em;}.ds-input:hover{border-color:rgba(255,255,255,.4);}.ds-input:focus,.ds-input:focus-visible{border-color:var(--yellow);outline:none;}"
+    },
+    {
+      "name": "Odds Bar",
+      "kind": "custom",
+      "description": "Scenario row: label, yellow-filled rounded track, Anton percentage.",
+      "html": "<div style=\"background:#0B1E66;padding:16px;width:340px\"><div class=\"ds-odds\"><span>1 em 2.000</span><span class=\"ds-track\"><i style=\"width:22%\"></i></span><span class=\"ds-pct\">2,2%</span></div></div>",
+      "css": ":host{--yellow:#FFE14D;--yellow-ink:#2A2100;--soft:#C3D0FF;--line:rgba(255,255,255,.14);--panel:rgba(4,12,52,.62);--display:\"Anton\",\"Arial Narrow\",sans-serif;--ui:\"Barlow SC\",\"Barlow Semi Condensed\",\"Segoe UI\",sans-serif;}.ds-odds{display:grid;grid-template-columns:92px 1fr 54px;gap:10px;align-items:center;font:600 15px/1.4 var(--ui);color:#fff;}.ds-track{height:10px;border-radius:10px;background:rgba(255,255,255,.12);overflow:hidden;}.ds-track i{display:block;height:100%;background:var(--yellow);border-radius:10px;}.ds-pct{text-align:right;font:400 17px/1 var(--display);font-variant-numeric:tabular-nums;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lobby Between Matches",
+    "overview": "The app is a room the player already knows: the saturated blue Fortnite lobby, its heavy condensed caps leaning forward, its item shop of rarity-framed tiles with a refresh timer. A player who Alt+Tabs in mid-session should find the chest count, the next Treasure Hour, the missing prizes and the token odds without reading, because every element sits where the game taught them to look. The world is loud in colour and type but sparse in words: big numerals, short Portuguese labels, drawn line icons, bars instead of sentences.\n\nDensity is \"one glance\": the main view fits a short desktop window without scrolling, and secondary views (Prêmios, Agenda, Conta) only extend what the lobby already shows. Depth comes from a glowing radial field with diagonal light streaks behind translucent navy glass panels; colour is reserved. Yellow means \"act\" or \"live\". Rarity gradients belong only to item tiles. Everything else is blue, white and soft periwinkle.\n\nIt rejects the grey, dark-card admin dashboard of the first version: no neutral greys as surfaces, no small centred text blocks, no walls of times and names.",
+    "keyCharacteristics": [
+      "Lobby-blue radial field with faint 115° light streaks, fixed behind everything.",
+      "Anton caps, skewed forward (about -7° to -8°), for every number, title, tab and button.",
+      "Parallelogram controls: tabs, buttons, the mark badge and step numbers are skewed boxes with upright contents.",
+      "One yellow, used for the primary action, the active tab, focus and anything live.",
+      "Rarity gradients on item tiles only; the prize row is the signature.",
+      "One-stroke drawn line icons (2px stroke, round caps) beside nearly every heading and label."
+    ],
+    "rules": [
+      {
+        "name": "The One Yellow Rule",
+        "body": "Yellow means \"press this\" or \"this is happening now\". A screen has one yellow button; any other yellow must be a live state, the active tab or an owned stamp.",
+        "section": "colors"
+      },
+      {
+        "name": "The Rarity Belongs to Items Rule",
+        "body": "Rarity gradients fill item tiles, the token medallion and event-type icons only. Panels, buttons and backgrounds never take a rarity colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Grey Rule",
+        "body": "There are no neutral grey surfaces. Every dark surface is a translucent navy over the blue field.",
+        "section": "colors"
+      },
+      {
+        "name": "The Leaning Caps Rule",
+        "body": "Every Anton element that reads as a header or number is skewed forward (skewX -7°, origin bottom left). Anton has no italic; the skew is the italic. Body text never leans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Numbers Shout Rule",
+        "body": "The answer is the biggest thing in its panel. A count, countdown or percentage is set in Anton at numeral size or larger, with its label in small Barlow caps underneath or beside it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glow Behind Rule",
+        "body": "Light comes from the field, not from the panels. Panels stay translucent so the radial and its streaks read through them; never make a panel opaque.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set every number that answers a question in Anton, skewed -7°, at 34px or larger, with tabular figures.",
+      "Do pair each heading, tab, chip and stat label with a one-stroke line icon (24px grid, 2px stroke, round caps and joins).",
+      "Do keep yellow for the single primary action, the active tab, focus, owned stamps and live states, always with Yellow Ink text.",
+      "Do show prizes as rarity-gradient 3:4 tiles with art, a dark name band and an owned stamp.",
+      "Do keep panels translucent navy (62%) with a 1px 14% white hairline so the lobby field glows through.",
+      "Do make every control a skewed parallelogram (-8°) with upright contents and 3px corners.",
+      "Do keep the Painel's four answers visible without scrolling down to a 760px-tall window."
+    ],
+    "donts": [
+      "Don't use neutral grey surfaces or opaque dark cards; that is the v0.1 dashboard this world replaced.",
+      "Don't put rarity gradients on panels, buttons or backgrounds.",
+      "Don't set white text on yellow, or add a second yellow button to a view.",
+      "Don't skew body text or chips; only Anton headers, numerals and controls lean.",
+      "Don't explain in sentences what a bar, icon or state can show.",
+      "Don't load fonts or icons from a CDN; fonts ship as local woff2 and icons as inline SVG symbols."
+    ]
+  }
+}
